@@ -179,8 +179,8 @@ export default function Home() {
 {/* 🚀 อย่าลืมแก้ตรง Spacer (บรรทัดด้านล่าง Header) ให้เล็กลงตามกันด้วยครับ */}
 <div className="h-[125px]"></div>
 
-          <div className="h-[140px]"></div>
-
+          {/* แก้จาก h-[140px] เป็น h-[115px] หรือ h-[110px] เพื่อลดช่องว่างครับ */}
+<div className="h-[110px]"></div>
           <main className="max-w-7xl mx-auto p-4 pt-2">
             <div className="mb-6 px-1">
                 <input type="text" placeholder={`ค้นหาใน ${selectedRoom}...`} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
