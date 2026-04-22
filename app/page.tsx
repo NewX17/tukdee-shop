@@ -77,7 +77,6 @@ export default function Home() {
       
       <RealTimeVisitors />
 
-      {/* 🎯 TIKTOK STYLE FIXED HEADER - ค้างตลอด */}
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
           <div className="flex items-center gap-3 mb-3">
@@ -118,7 +117,6 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto p-4">
         {!selectedRoom ? (
-          /* 🏠 หน้าแรก: Flash Sale + หมวดหมู่ใหญ่ */
           <div className="animate-fadeIn">
              <div className="text-center mb-8 py-6">
                 <h1 className="text-5xl font-black mb-1 italic tracking-tighter text-black">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
@@ -159,7 +157,6 @@ export default function Home() {
              </div>
           </div>
         ) : (
-          /* 🛍️ หน้ารายการสินค้า */
           <div className="grid grid-cols-2 gap-2 animate-fadeIn">
             {filteredProducts.map((p: any, i: number) => {
               const price = String(p["ราคา"] || "0");
@@ -168,6 +165,12 @@ export default function Home() {
                   className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-50 active:opacity-70">
                   <div className="relative aspect-square">
                     <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
+                    
+                    {/* ป้าย Mall สีแดง */}
+                    <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-md">
+                      Mall
+                    </div>
+
                     <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white">
                       <span className="text-cyan-400 font-bold">XTRA</span>
                       <span>จัดส่งฟรี</span>
@@ -176,9 +179,13 @@ export default function Home() {
                   <div className="p-3">
                     <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px]">{p["ชื่อสินค้า"]}</p>
                     <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
+                    
+                    {/* ส่วนคะแนนดาว และจำนวนที่ขายได้ */}
                     <div className="flex items-center gap-1.5 mt-1">
-                      <span className="text-[10px] text-[#FFAB00]">★ 5.0</span>
-                      <span className="text-[10px] text-gray-400">ขายได้ 1k+ ชิ้น</span>
+                      <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">
+                        ★ 5.0
+                      </div>
+                      <span className="text-[10px] text-gray-400 font-medium">ขายได้ 1k+ ชิ้น</span>
                     </div>
                   </div>
                 </div>
@@ -188,7 +195,6 @@ export default function Home() {
         )}
       </main>
 
-      {/* 📱 BOTTOM NAV - เหลือแค่ปุ่มหน้าหลักตรงกลาง */}
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
         <button 
           onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}}
