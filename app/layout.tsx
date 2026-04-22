@@ -5,7 +5,11 @@ export const metadata = {
   title: 'ถูกดี. - รวมของกินของใช้เด็กหอ',
   description: 'รวมไอเทมเด็กหอและของแต่งโต๊ะคอมที่คัดมาแล้วว่าคุ้ม',
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', href: '/favicon.ico' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
 }
 
