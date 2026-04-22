@@ -1,8 +1,6 @@
 import './globals.css'
 import Script from 'next/script'
 
-// ในไฟล์ app/layout.tsx
-
 export const metadata = {
   title: 'ถูกดี. - รวมของกินของใช้เด็กหอ',
   description: 'รวมไอเทมเด็กหอและของแต่งโต๊ะคอมที่คัดมาแล้วว่าคุ้ม',
@@ -19,7 +17,6 @@ export default function RootLayout({
   return (
     <html lang="th">
       <head>
-        {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-0KQP2D75DY"
           strategy="afterInteractive"
