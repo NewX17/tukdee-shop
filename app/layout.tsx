@@ -1,9 +1,15 @@
 import './globals.css'
 import Script from 'next/script'
 
+// ในไฟล์ app/layout.tsx
+
 export const metadata = {
   title: 'ถูกดี. - รวมของกินของใช้เด็กหอ',
   description: 'รวมไอเทมเด็กหอและของแต่งโต๊ะคอมที่คัดมาแล้วว่าคุ้ม',
+  // 👇 เพิ่มโค้ด 3 บรรทัดนี้เข้าไปครับ 👇
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
