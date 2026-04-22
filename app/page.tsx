@@ -15,12 +15,12 @@ const RealTimeVisitors = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-6 left-4 z-[100] bg-white/95 backdrop-blur-md border border-gray-200 shadow-2xl rounded-full px-4 py-2.5 flex items-center gap-2 animate-bounce">
-      <span className="relative flex h-3 w-3">
+    <div className="fixed bottom-20 left-4 z-[100] bg-white/90 backdrop-blur-md border border-gray-100 shadow-lg rounded-full px-4 py-2 flex items-center gap-2">
+      <span className="relative flex h-2 w-2">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
       </span>
-      <p className="text-[12px] font-bold text-gray-800">ขณะนี้มี <span className="text-[#FE2C55]">{count}</span> คนกำลังดูสินค้านี้</p>
+      <p className="text-[10px] font-bold text-gray-600">ขณะนี้มี <span className="text-[#FE2C55]">{count}</span> คนกำลังดู</p>
     </div>
   );
 };
@@ -59,174 +59,126 @@ export default function Home() {
     fetchAllData();
   }, []);
 
-  const flashSaleProducts = useMemo(() => {
-    return [...products]
-      .sort((a: any, b: any) => Number(b["ส่วนลด"]) - Number(a["ส่วนลด"]))
-      .slice(0, 4);
-  }, [products]);
-
   const filteredProducts = products.filter((p: any) => 
-    p["กลุ่มสินค้า"] === selectedRoom && 
+    (!selectedRoom || p["กลุ่มสินค้า"] === selectedRoom) && 
     (p["ชื่อสินค้า"]?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  if (loading) return <div className="min-h-screen bg-[#121212] flex items-center justify-center text-white italic text-3xl font-black tracking-tighter">TUKDEE.</div>;
+  if (loading) return <div className="min-h-screen bg-white flex items-center justify-center text-[#FE2C55] text-2xl font-black italic">TUKDEE.</div>;
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-sans overflow-x-hidden pb-10">
+    <div className="min-h-screen bg-[#F8F8F8] text-black font-sans pb-20">
       
-      {selectedRoom && <RealTimeVisitors />}
+      <RealTimeVisitors />
 
-      {!selectedRoom ? (
-        <div className="max-w-7xl mx-auto p-6 md:p-10">
-          <div className="text-center mb-12 py-10">
-            <h1 className="text-7xl font-black mb-2 italic tracking-tighter text-white">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
-            <p className="text-gray-500 tracking-[0.4em] text-[10px] font-bold uppercase">Premium Affiliate Selection</p>
+      {/* 🎯 TIKTOK STYLE FIXED HEADER */}
+      <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
+          {/* Search Bar Row */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="relative flex-grow">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+              <input 
+                type="text" 
+                placeholder="ค้นหาสินค้าขายดีอันดับ 1..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[#F1F1F2] border-none rounded-full py-2.5 pl-11 pr-4 text-sm focus:ring-1 focus:ring-[#FE2C55]"
+              />
+            </div>
+            <button className="text-[#FE2C55] font-bold text-sm px-2">ค้นหา</button>
           </div>
 
-          {/* Flash Sale Section */}
-          <div className="mb-12">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="text-xl">🔥</span>
-              <h3 className="text-lg font-black uppercase italic tracking-tight">Flash Sale ลดแรงวันนี้</h3>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {flashSaleProducts.map((p: any, i: number) => (
-                <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-2xl overflow-hidden cursor-pointer shadow-lg active:scale-95 transition-transform">
-                  <div className="aspect-square bg-gray-50">
-                    <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                  </div>
-                  <div className="p-3 text-black">
-                    <p className="text-[11px] font-bold line-clamp-1 opacity-70">{p["ชื่อสินค้า"]}</p>
-                    <div className="text-[#FE2C55] font-black text-lg">฿{p["ราคา"]}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Room Selection */}
-          <h3 className="text-lg font-black uppercase italic tracking-tight mb-5 px-1">เลือกหมวดหมู่</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Categories Row (Horizontal Scroll) */}
+          <div className="flex overflow-x-auto no-scrollbar gap-6 border-b border-gray-100">
+            <button 
+              onClick={() => setSelectedRoom(null)}
+              className={`pb-2 text-[15px] whitespace-nowrap font-bold transition-all ${!selectedRoom ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}
+            >
+              ทั้งหมด
+            </button>
             {rooms.map((r: any) => (
               <button 
                 key={r.RoomName} 
-                onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
-                className="relative h-48 rounded-3xl overflow-hidden active:scale-95 transition-all border border-white/5 bg-[#1a1a1a] group"
+                onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
+                className={`pb-2 text-[15px] whitespace-nowrap font-bold transition-all ${selectedRoom === r.RoomName ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}
               >
-                {r.BackgroundImage && (
-                  <img 
-                    src={getImageUrl(r.BackgroundImage)} 
-                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" 
-                    alt={r.RoomName} 
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter text-white">
-                  {r.RoomName}
-                </span>
+                {r.RoomName}
               </button>
             ))}
           </div>
         </div>
-      ) : (
-        <div className="animate-fadeIn">
-          {/* 🎯 HEADER สไตล์ Minimalist - สะอาดตา ไม่บังสินค้า */}
-<header className="fixed top-0 left-0 right-0 bg-[#121212]/95 backdrop-blur-xl z-[80] border-b border-white/5">
-  <div className="max-w-7xl mx-auto">
-    {/* แถวบน: ปุ่มปิดและชื่อหมวดหมู่ (ทำให้เล็กลง) */}
-    <div className="flex items-center justify-between px-4 py-3">
-      <button onClick={() => setSelectedRoom(null)} 
-        className="flex items-center justify-center w-9 h-9 rounded-full bg-white/5 active:bg-[#FE2C55] transition-colors">
-        <span className="text-lg font-bold text-white">✕</span>
-      </button>
-      <h2 className="text-sm font-black uppercase italic tracking-widest text-white/90">{selectedRoom}</h2>
-      <div className="w-9"></div>
-    </div>
+      </header>
 
-    {/* แถวล่าง: ปุ่มหมวดหมู่แบบวงกลมสไตล์มินิมอล */}
-    <div className="flex overflow-x-auto no-scrollbar gap-6 px-6 pb-4">
-      {rooms.map((r: any) => (
-        <button 
-          key={r.RoomName} 
-          onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
-          className="flex flex-col items-center gap-1.5 flex-shrink-0"
-        >
-          {/* วงกลมรูปภาพ (ขนาดเล็กลงและดูคมขึ้น) */}
-          <div className={`w-12 h-12 rounded-full overflow-hidden border transition-all ${
-            selectedRoom === r.RoomName 
-            ? 'border-[#FE2C55] scale-110 shadow-[0_0_8px_rgba(254,44,85,0.3)]' 
-            : 'border-white/10 opacity-50'
-          }`}>
-            <img 
-              src={getImageUrl(r.BackgroundImage)} 
-              className="w-full h-full object-cover" 
-              alt="" 
-            />
-          </div>
-          {/* ชื่อหมวดหมู่ด้านล่าง (ตัวเล็ก บาง สวยงาม) */}
-          <span className={`text-[9px] font-bold uppercase tracking-tight ${
-            selectedRoom === r.RoomName ? 'text-[#FE2C55]' : 'text-gray-500'
-          }`}>
-            {r.RoomName}
-          </span>
-        </button>
-      ))}
-    </div>
-  </div>
-</header>
+      {/* Spacer for Fixed Header */}
+      <div className="h-[125px]"></div>
 
-{/* 🚀 อย่าลืมแก้ตรง Spacer (บรรทัดด้านล่าง Header) ให้เล็กลงตามกันด้วยครับ */}
-<div className="h-[125px]"></div>
-
-          {/* แก้จาก h-[140px] เป็น h-[115px] หรือ h-[110px] เพื่อลดช่องว่างครับ */}
-<div className="h-[110px]"></div>
-          <main className="max-w-7xl mx-auto p-4 pt-2">
-            <div className="mb-6 px-1">
-                <input type="text" placeholder={`ค้นหาใน ${selectedRoom}...`} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm focus:outline-none focus:border-[#FE2C55] text-white placeholder:text-gray-600" />
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-              {filteredProducts.map((p: any, i: number) => {
-                const price = String(p["ราคา"] || "0");
-                const discount = Number(p["ส่วนลด"] || 0);
-                const oldPrice = !price.includes('-') && discount > 0 ? Math.floor(Number(price.replace(/,/g,'')) / (1-(discount/100))) : null;
-
-                return (
-                  <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
-                    className="bg-white rounded-2xl overflow-hidden flex flex-col shadow-sm active:scale-[0.98] transition-transform group">
-                    <div className="relative aspect-square bg-gray-50">
-                      <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                      {discount > 0 && <span className="absolute top-2 left-2 bg-[#FE2C55] text-white text-[10px] font-black px-2 py-1 rounded-lg">-{discount}%</span>}
-                    </div>
-                    <div className="p-3 text-black flex flex-col flex-grow">
-                      <p className="text-[12px] md:text-[14px] line-clamp-2 mb-1 font-bold leading-tight min-h-[32px]">{p["ชื่อสินค้า"]}</p>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-xl font-black text-[#FE2C55]">฿{price}</span>
-                        {oldPrice && <span className="text-[10px] text-gray-400 line-through">฿{oldPrice.toLocaleString()}</span>}
-                      </div>
-                      <div className="flex items-center gap-1 mt-2 mb-3">
-                        <span className="bg-green-50 text-green-600 text-[8px] font-bold px-1.5 py-0.5 rounded border border-green-100">ส่งฟรี</span>
-                        <span className="bg-gray-50 text-gray-400 text-[8px] font-bold px-1.5 py-0.5 rounded border border-gray-100">COD</span>
-                      </div>
-                      <button className="w-full bg-[#FE2C55] text-white py-3 rounded-xl text-[12px] font-black uppercase shadow-lg shadow-[#FE2C55]/20">สั่งซื้อ</button>
-                    </div>
+      {/* Product Feed */}
+      <main className="max-w-7xl mx-auto p-2">
+        <div className="grid grid-cols-2 gap-1.5 md:gap-4">
+          {filteredProducts.map((p: any, i: number) => {
+            const price = String(p["ราคา"] || "0");
+            const discount = Number(p["ส่วนลด"] || 0);
+            
+            return (
+              <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
+                className="bg-white rounded-sm overflow-hidden flex flex-col shadow-sm active:opacity-80">
+                <div className="relative aspect-square">
+                  <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
+                  {discount > 0 && (
+                    <span className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">
+                      -{discount}%
+                    </span>
+                  )}
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white">
+                    <span className="text-cyan-400 font-bold">XTRA</span>
+                    <span>จัดส่งฟรี</span>
                   </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-20 flex flex-col items-center gap-4">
-               <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} 
-                className="bg-white/5 border border-white/10 text-gray-400 px-10 py-4 rounded-full text-sm font-bold uppercase hover:bg-white/10 transition-all">
-                ← กลับไปเลือกหมวดหมู่อื่น
-               </button>
-               <p className="text-[10px] text-gray-700 font-bold tracking-widest uppercase">Tukdee Selection • 2026</p>
-            </div>
-          </main>
+                </div>
+                
+                <div className="p-2.5 flex flex-col flex-grow">
+                  <p className="text-[13px] line-clamp-2 mb-1.5 font-medium leading-tight min-h-[36px]">
+                    {p["ชื่อสินค้า"]}
+                  </p>
+                  
+                  <div className="flex items-baseline gap-1 mt-auto">
+                    <span className="text-[16px] font-bold text-[#FE2C55]">฿{price}</span>
+                    <span className="text-[10px] text-gray-400 line-through">฿{ (Number(price.replace(/,/g,'')) * 1.5).toLocaleString() }</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="flex items-center text-[10px] text-[#FFAB00]">
+                      ★ 5.0
+                    </div>
+                    <span className="text-[10px] text-gray-400">ขายได้ 1k+ ชิ้น</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+      </main>
+
+      {/* 📱 Bottom Navigation Bar (Optional - To complete TikTok vibe) */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 flex justify-between items-center z-[100]">
+        <div className="flex flex-col items-center opacity-100" onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}}>
+          <span className="text-xl">🏠</span>
+          <span className="text-[9px] mt-0.5 font-bold">หน้าหลัก</span>
+        </div>
+        <div className="flex flex-col items-center opacity-40">
+          <span className="text-xl">🛍️</span>
+          <span className="text-[9px] mt-0.5">ร้านค้า</span>
+        </div>
+        <div className="bg-black rounded-lg px-3 py-1 text-white text-xl font-bold">+</div>
+        <div className="flex flex-col items-center opacity-40">
+          <span className="text-xl">💬</span>
+          <span className="text-[9px] mt-0.5">ข้อความ</span>
+        </div>
+        <div className="flex flex-col items-center opacity-40">
+          <span className="text-xl">👤</span>
+          <span className="text-[9px] mt-0.5">โปรไฟล์</span>
+        </div>
+      </div>
     </div>
   );
 }
