@@ -108,17 +108,33 @@ export default function Home() {
 
           {/* Room Selection */}
           <h3 className="text-lg font-black uppercase italic tracking-tight mb-5 px-1">เลือกหมวดหมู่</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {rooms.map((r: any) => (
-              <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
-                className="relative h-48 rounded-3xl overflow-hidden active:scale-95 transition-all border border-white/5 bg-[#1a1a1a] group">
-                <img src={getImageUrl(r.BackgroundImage)} className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-80 transition-opacity" alt="" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter">{r.RoomName}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+          {/* Room Selection - จุดที่คุณวงไว้ */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+  {rooms.map((r: any) => (
+    <button 
+      key={r.RoomName} 
+      onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
+      className="relative h-48 rounded-3xl overflow-hidden active:scale-95 transition-all border border-white/5 bg-[#1a1a1a] group"
+    >
+      {/* 🖼️ ส่วนแสดงรูปภาพพื้นหลัง */}
+      {r.BackgroundImage && (
+        <img 
+          src={getImageUrl(r.BackgroundImage)} 
+          className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" 
+          alt={r.RoomName} 
+        />
+      )}
+      
+      {/* แถบสีดำจางๆ เพื่อให้ชื่อหมวดหมู่เด่นขึ้น */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+      
+      {/* ชื่อหมวดหมู่ (เช่น ห้องนอน, โต๊ะคอม) */}
+      <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter text-white">
+        {r.RoomName}
+      </span>
+    </button>
+  ))}
+</div>
       ) : (
         <div className="animate-fadeIn">
           {/* 🎯 FIXED HEADER - ค้างไว้ข้างบนเสมอ */}
