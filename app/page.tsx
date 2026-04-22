@@ -17,7 +17,7 @@ const RealTimeVisitors = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-5 left-5 z-[100] bg-white/90 backdrop-blur-md border border-gray-200 shadow-2xl rounded-full px-4 py-2 flex items-center gap-2 animate-bounceIn">
+    <div className="fixed bottom-5 left-5 z-[100] bg-white/90 backdrop-blur-md border border-gray-200 shadow-2xl rounded-full px-4 py-2 flex items-center gap-2">
       <span className="relative flex h-3 w-3">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
         <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -41,10 +41,10 @@ const TikTokMallBadge = () => (
 );
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [rooms, setRooms] = useState([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [rooms, setRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const SHEET_ID = "1qreVNyW_04G_4I4gn_dwy5mxTbVa5FObUEipBWGjWMg";
@@ -66,8 +66,8 @@ export default function Home() {
       try {
         const [resR, resP] = await Promise.all([fetch(ROOMS_URL), fetch(PRODUCTS_URL)]);
         const [csvR, csvP] = await Promise.all([resR.text(), resP.text()]);
-        setRooms(Papa.parse(csvR, { header: true }).data.filter(r => r.RoomName));
-        setProducts(Papa.parse(csvP, { header: true }).data.filter(p => p["ชื่อสินค้า"]));
+        setRooms(Papa.parse(csvR, { header: true }).data as any[]);
+        setProducts(Papa.parse(csvP, { header: true }).data as any[]);
         setLoading(false);
       } catch (e) { setLoading(false); }
     };
@@ -76,16 +76,16 @@ export default function Home() {
 
   const flashSaleProducts = useMemo(() => {
     return [...products]
-      .sort((a, b) => Number(b["ส่วนลด"]) - Number(a["ส่วนลด"]))
+      .sort((a: any, b: any) => Number(b["ส่วนลด"]) - Number(a["ส่วนลด"]))
       .slice(0, 4);
   }, [products]);
 
-  const filteredProducts = products.filter(p => 
+  const filteredProducts = products.filter((p: any) => 
     p["กลุ่มสินค้า"] === selectedRoom && 
     (p["ชื่อสินค้า"].toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleShare = (e, product) => {
+  const handleShare = (e: any, product: any) => {
     e.stopPropagation();
     if (navigator.share) {
       navigator.share({ title: product["ชื่อสินค้า"], url: window.location.href });
@@ -103,19 +103,19 @@ export default function Home() {
       {!selectedRoom ? (
         <div className="max-w-7xl mx-auto p-6 md:p-10">
           <div className="text-center mb-16">
-            <h1 className="text-8xl font-black mb-4 italic tracking-tighter">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
+            <h1 className="text-8xl font-black mb-4 italic tracking-tighter text-white">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
             <p className="text-gray-500 tracking-[0.5em] text-xs font-bold uppercase underline decoration-[#FE2C55] decoration-2">Premium Selection</p>
           </div>
 
           <div className="mb-20">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-6 text-white">
               <span className="text-2xl animate-pulse">🔥</span>
               <h3 className="text-xl font-black uppercase italic tracking-tighter">Flash Sale ลดแรงวันนี้</h3>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {flashSaleProducts.map((p, i) => (
+              {flashSaleProducts.map((p: any, i: number) => (
                 <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-xl overflow-hidden cursor-pointer group hover:border-[#FE2C55] border border-transparent transition-all">
-                  <div className="relative aspect-square">
+                  <div className="relative aspect-square bg-gray-100">
                     <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" />
                   </div>
                   <div className="p-3 text-black">
@@ -128,8 +128,8 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            {rooms.map((r) => (
-              <button key={r.RoomName} onClick={() => setSelectedRoom(r.RoomName)} className="relative h-64 rounded-2xl overflow-hidden hover:scale-105 transition-all border border-white/10 shadow-2xl bg-[#1a1a1a] group">
+            {rooms.map((r: any) => (
+              <button key={r.RoomName} onClick={() => setSelectedRoom(r.RoomName)} className="relative h-64 rounded-2xl overflow-hidden hover:scale-105 transition-all border border-white/10 shadow-2xl bg-[#1a1a1a] group text-white">
                 <img src={getImageUrl(r.BackgroundImage)} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-70 transition-opacity" />
                 <span className="relative z-10 text-3xl font-black uppercase italic tracking-tighter">{r.RoomName}</span>
               </button>
@@ -139,7 +139,7 @@ export default function Home() {
       ) : (
         <div className="animate-fadeIn">
           <header className="p-4 md:p-6 border-b border-white/5 sticky top-0 bg-[#121212]/95 backdrop-blur-xl z-50">
-            <div className="max-w-7xl mx-auto flex flex-col gap-4">
+            <div className="max-w-7xl mx-auto flex flex-col gap-4 text-white">
               <div className="flex justify-between items-center">
                 <button onClick={() => {setSelectedRoom(null); setSearchQuery("");}} className="text-gray-500 font-bold hover:text-white text-sm">← หน้าแรก</button>
                 <h2 className="text-xl font-black uppercase italic">{selectedRoom}</h2>
@@ -147,23 +147,23 @@ export default function Home() {
               </div>
               <div className="relative w-full max-w-md mx-auto">
                 <input type="text" placeholder={`ค้นหาใน ${selectedRoom}...`} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-10 text-sm focus:outline-none focus:border-[#FE2C55]" />
+                  className="w-full bg-white/5 border border-white/10 rounded-full py-2 px-10 text-sm focus:outline-none focus:border-[#FE2C55] text-white" />
               </div>
             </div>
           </header>
 
           <main className="max-w-7xl mx-auto p-4 md:p-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {filteredProducts.map((p, i) => {
+              {filteredProducts.map((p: any, i: number) => {
                 const price = String(p["ราคา"] || "0");
                 const discount = Number(p["ส่วนลด"] || 0);
                 const oldPrice = !price.includes('-') && discount > 0 ? Math.floor(Number(price.replace(/,/g,'')) / (1-(discount/100))) : null;
 
                 return (
                   <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-xl overflow-hidden flex flex-col cursor-pointer hover:shadow-2xl transition-all group">
-                    <div className="relative aspect-square">
+                    <div className="relative aspect-square bg-gray-100">
                       {p.MallStatus?.toLowerCase() === 'mall' && <TikTokMallBadge />}
-                      <button onClick={(e) => handleShare(e, p)} className="absolute top-3 right-3 z-20 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100">
+                      <button onClick={(e) => handleShare(e, p)} className="absolute top-3 right-3 z-20 bg-white/80 backdrop-blur-md p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all">
                         <span className="text-xs">📤</span>
                       </button>
                       <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" />
