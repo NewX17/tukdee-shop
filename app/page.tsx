@@ -131,54 +131,53 @@ export default function Home() {
         </div>
       ) : (
         <div className="animate-fadeIn">
-          {/* 🎯 FIXED HEADER - ตัวหนังสืออยู่กลางภาพตามโจทย์ */}
-<header className="fixed top-0 left-0 right-0 bg-[#121212]/95 backdrop-blur-2xl z-[80] border-b border-white/5">
+          {/* 🎯 HEADER สไตล์ Minimalist - สะอาดตา ไม่บังสินค้า */}
+<header className="fixed top-0 left-0 right-0 bg-[#121212]/95 backdrop-blur-xl z-[80] border-b border-white/5">
   <div className="max-w-7xl mx-auto">
-    {/* แถวบน: ปุ่มปิดและชื่อหมวดหมู่ที่เลือก */}
-    <div className="flex items-center justify-between p-4">
+    {/* แถวบน: ปุ่มปิดและชื่อหมวดหมู่ (ทำให้เล็กลง) */}
+    <div className="flex items-center justify-between px-4 py-3">
       <button onClick={() => setSelectedRoom(null)} 
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 active:bg-[#FE2C55]">
-        <span className="text-xl font-bold text-white">✕</span>
+        className="flex items-center justify-center w-9 h-9 rounded-full bg-white/5 active:bg-[#FE2C55] transition-colors">
+        <span className="text-lg font-bold text-white">✕</span>
       </button>
-      <h2 className="text-md font-black uppercase italic tracking-tight text-white">{selectedRoom}</h2>
-      <div className="w-10"></div>
+      <h2 className="text-sm font-black uppercase italic tracking-widest text-white/90">{selectedRoom}</h2>
+      <div className="w-9"></div>
     </div>
 
-    {/* แถวล่าง: ปุ่มวงกลมแบบมีตัวหนังสือตรงกลาง */}
-    <div className="flex overflow-x-auto no-scrollbar gap-4 px-4 pb-5">
+    {/* แถวล่าง: ปุ่มหมวดหมู่แบบวงกลมสไตล์มินิมอล */}
+    <div className="flex overflow-x-auto no-scrollbar gap-6 px-6 pb-4">
       {rooms.map((r: any) => (
         <button 
           key={r.RoomName} 
           onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
-          className={`relative flex-shrink-0 w-20 h-20 rounded-full overflow-hidden border-2 transition-all ${
-            selectedRoom === r.RoomName 
-            ? 'border-[#FE2C55] scale-105 shadow-[0_0_10px_rgba(254,44,85,0.4)]' 
-            : 'border-white/10 opacity-70'
-          }`}
+          className="flex flex-col items-center gap-1.5 flex-shrink-0"
         >
-          {/* รูปพื้นหลังในวงกลม */}
-          <img 
-            src={getImageUrl(r.BackgroundImage)} 
-            className="absolute inset-0 w-full h-full object-cover" 
-            alt="" 
-          />
-          
-          {/* เลเยอร์สีดำจางๆ ทับรูปเพื่อให้ตัวหนังสืออ่านง่าย */}
-          <div className="absolute inset-0 bg-black/40"></div>
-          
-          {/* ตัวหนังสือบอกหมวดหมู่ตรงกลางภาพ */}
-          <div className="absolute inset-0 flex items-center justify-center p-1">
-            <span className={`text-[10px] font-black uppercase text-center leading-tight drop-shadow-md ${
-              selectedRoom === r.RoomName ? 'text-[#FE2C55]' : 'text-white'
-            }`}>
-              {r.RoomName}
-            </span>
+          {/* วงกลมรูปภาพ (ขนาดเล็กลงและดูคมขึ้น) */}
+          <div className={`w-12 h-12 rounded-full overflow-hidden border transition-all ${
+            selectedRoom === r.RoomName 
+            ? 'border-[#FE2C55] scale-110 shadow-[0_0_8px_rgba(254,44,85,0.3)]' 
+            : 'border-white/10 opacity-50'
+          }`}>
+            <img 
+              src={getImageUrl(r.BackgroundImage)} 
+              className="w-full h-full object-cover" 
+              alt="" 
+            />
           </div>
+          {/* ชื่อหมวดหมู่ด้านล่าง (ตัวเล็ก บาง สวยงาม) */}
+          <span className={`text-[9px] font-bold uppercase tracking-tight ${
+            selectedRoom === r.RoomName ? 'text-[#FE2C55]' : 'text-gray-500'
+          }`}>
+            {r.RoomName}
+          </span>
         </button>
       ))}
     </div>
   </div>
 </header>
+
+{/* 🚀 อย่าลืมแก้ตรง Spacer (บรรทัดด้านล่าง Header) ให้เล็กลงตามกันด้วยครับ */}
+<div className="h-[125px]"></div>
 
           <div className="h-[140px]"></div>
 
