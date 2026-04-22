@@ -51,7 +51,7 @@ export default function Home() {
   const ROOMS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Rooms`;
   const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Products`;
 
-  const getImageUrl = (url) => {
+  const getImageUrl = (url: any) => {
     if (!url || typeof url !== 'string') return "";
     const cleanUrl = url.trim();
     if (cleanUrl.includes('drive.google.com')) {
