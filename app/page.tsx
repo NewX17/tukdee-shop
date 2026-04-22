@@ -132,33 +132,49 @@ export default function Home() {
       ) : (
         <div className="animate-fadeIn">
           <header className="fixed top-0 left-0 right-0 bg-[#121212]/90 backdrop-blur-2xl z-[80] border-b border-white/5">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between p-4">
-                <button onClick={() => setSelectedRoom(null)} 
-                  className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 active:bg-[#FE2C55] transition-colors">
-                  <span className="text-2xl font-bold text-white">✕</span>
-                </button>
-                <h2 className="text-lg font-black uppercase italic tracking-tight text-white">{selectedRoom}</h2>
-                <div className="w-12"></div>
-              </div>
+  <div className="max-w-7xl mx-auto">
+    {/* แถวบน: ปุ่มกากบาทและชื่อหมวดหมู่ */}
+    <div className="flex items-center justify-between p-4">
+      <button onClick={() => setSelectedRoom(null)} 
+        className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 active:bg-[#FE2C55] transition-colors">
+        <span className="text-2xl font-bold text-white">✕</span>
+      </button>
+      <h2 className="text-lg font-black uppercase italic tracking-tight text-white">{selectedRoom}</h2>
+      <div className="w-12"></div>
+    </div>
 
-              <div className="flex overflow-x-auto no-scrollbar gap-2 px-4 pb-4">
-                {rooms.map((r: any) => (
-                  <button 
-                    key={r.RoomName} 
-                    onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
-                    className={`whitespace-nowrap px-5 py-2 rounded-full text-xs font-black uppercase transition-all ${
-                      selectedRoom === r.RoomName 
-                      ? 'bg-[#FE2C55] text-white shadow-[0_0_15px_rgba(254,44,85,0.4)]' 
-                      : 'bg-white/5 text-gray-400 border border-white/5'
-                    }`}
-                  >
-                    {r.RoomName}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </header>
+    {/* แถวล่าง: ปุ่มเปลี่ยนหมวดหมู่แบบมีรูปพื้นหลัง */}
+    <div className="flex overflow-x-auto no-scrollbar gap-3 px-4 pb-4">
+      {rooms.map((r: any) => (
+        <button 
+          key={r.RoomName} 
+          onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
+          className={`relative whitespace-nowrap px-6 py-3 rounded-2xl text-[11px] font-black uppercase transition-all overflow-hidden border ${
+            selectedRoom === r.RoomName 
+            ? 'border-[#FE2C55] shadow-[0_0_15px_rgba(254,44,85,0.3)]' 
+            : 'border-white/10 opacity-70'
+          }`}
+        >
+          {/* รูปพื้นหลังจิ๋วในปุ่ม */}
+          {r.BackgroundImage && (
+            <img 
+              src={getImageUrl(r.BackgroundImage)} 
+              className="absolute inset-0 w-full h-full object-cover opacity-40" 
+              alt="" 
+            />
+          )}
+          {/* เลเยอร์สีทับเพื่อให้ตัวหนังสือชัดขึ้น */}
+          <div className={`absolute inset-0 ${selectedRoom === r.RoomName ? 'bg-[#FE2C55]/60' : 'bg-black/60'}`}></div>
+          
+          {/* ข้อความชื่อหมวดหมู่ */}
+          <span className="relative z-10 text-white drop-shadow-md">
+            {r.RoomName}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+</header>
 
           <div className="h-[140px]"></div>
 
