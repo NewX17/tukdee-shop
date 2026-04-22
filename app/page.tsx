@@ -131,43 +131,41 @@ export default function Home() {
         </div>
       ) : (
         <div className="animate-fadeIn">
-          <header className="fixed top-0 left-0 right-0 bg-[#121212]/90 backdrop-blur-2xl z-[80] border-b border-white/5">
+          {/* 🎯 FIXED HEADER - แก้ไขใหม่ให้ปุ่มไม่พัง */}
+<header className="fixed top-0 left-0 right-0 bg-[#121212]/95 backdrop-blur-2xl z-[80] border-b border-white/5">
   <div className="max-w-7xl mx-auto">
-    {/* แถวบน: ปุ่มกากบาทและชื่อหมวดหมู่ */}
+    {/* แถวบน: ปุ่มปิดและชื่อหมวดหมู่ที่เลือก */}
     <div className="flex items-center justify-between p-4">
       <button onClick={() => setSelectedRoom(null)} 
-        className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 active:bg-[#FE2C55] transition-colors">
-        <span className="text-2xl font-bold text-white">✕</span>
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 active:bg-[#FE2C55]">
+        <span className="text-xl font-bold text-white">✕</span>
       </button>
-      <h2 className="text-lg font-black uppercase italic tracking-tight text-white">{selectedRoom}</h2>
-      <div className="w-12"></div>
+      <h2 className="text-md font-black uppercase italic tracking-tight text-white">{selectedRoom}</h2>
+      <div className="w-10"></div>
     </div>
 
-    {/* แถวล่าง: ปุ่มเปลี่ยนหมวดหมู่แบบมีรูปพื้นหลัง */}
-    <div className="flex overflow-x-auto no-scrollbar gap-3 px-4 pb-4">
+    {/* แถวล่าง: ปุ่มหมวดหมู่แบบวงกลม (ไม่พังแน่นอน) */}
+    <div className="flex overflow-x-auto no-scrollbar gap-5 px-6 pb-5">
       {rooms.map((r: any) => (
         <button 
           key={r.RoomName} 
           onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
-          className={`relative whitespace-nowrap px-6 py-3 rounded-2xl text-[11px] font-black uppercase transition-all overflow-hidden border ${
-            selectedRoom === r.RoomName 
-            ? 'border-[#FE2C55] shadow-[0_0_15px_rgba(254,44,85,0.3)]' 
-            : 'border-white/10 opacity-70'
-          }`}
+          className="flex flex-col items-center gap-2 flex-shrink-0"
         >
-          {/* รูปพื้นหลังจิ๋วในปุ่ม */}
-          {r.BackgroundImage && (
+          {/* วงกลมใส่รูป */}
+          <div className={`w-14 h-14 rounded-full overflow-hidden border-2 transition-all ${
+            selectedRoom === r.RoomName ? 'border-[#FE2C55] scale-110 shadow-[0_0_10px_rgba(254,44,85,0.5)]' : 'border-white/10 opacity-60'
+          }`}>
             <img 
               src={getImageUrl(r.BackgroundImage)} 
-              className="absolute inset-0 w-full h-full object-cover opacity-40" 
+              className="w-full h-full object-cover" 
               alt="" 
             />
-          )}
-          {/* เลเยอร์สีทับเพื่อให้ตัวหนังสือชัดขึ้น */}
-          <div className={`absolute inset-0 ${selectedRoom === r.RoomName ? 'bg-[#FE2C55]/60' : 'bg-black/60'}`}></div>
-          
-          {/* ข้อความชื่อหมวดหมู่ */}
-          <span className="relative z-10 text-white drop-shadow-md">
+          </div>
+          {/* ชื่อหมวดหมู่ด้านล่างปุ่ม */}
+          <span className={`text-[10px] font-bold uppercase tracking-tighter ${
+            selectedRoom === r.RoomName ? 'text-[#FE2C55]' : 'text-gray-500'
+          }`}>
             {r.RoomName}
           </span>
         </button>
