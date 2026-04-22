@@ -15,18 +15,19 @@ export default function RootLayout({
     <html lang="th">
       <head>
         {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-J9YBY67F7C"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-J9YBY67F7C');
-          `}
-        </Script>
+        // ในไฟล์ app/layout.tsx
+<Script
+  src="https://www.googletagmanager.com/gtag/js?id=G-0KQP2D75DY"
+  strategy="afterInteractive"
+/>
+<Script id="google-analytics" strategy="afterInteractive">
+  {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-0KQP2D75DY');
+  `}
+</Script>
       </head>
       <body>{children}</body>
     </html>
