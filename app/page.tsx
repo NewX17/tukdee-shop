@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Papa from 'papaparse';
 
 const RealTimeVisitors = () => {
@@ -31,7 +31,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const SHEET_ID = "1qreVNyW_04G_4I4gn_dwy5mxTbVa5FObUEipBWGjWMg";
   const ROOMS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Rooms`;
@@ -108,49 +107,41 @@ export default function Home() {
 
           {/* Room Selection */}
           <h3 className="text-lg font-black uppercase italic tracking-tight mb-5 px-1">เลือกหมวดหมู่</h3>
-          {/* Room Selection - จุดที่คุณวงไว้ */}
-<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-  {rooms.map((r: any) => (
-    <button 
-      key={r.RoomName} 
-      onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
-      className="relative h-48 rounded-3xl overflow-hidden active:scale-95 transition-all border border-white/5 bg-[#1a1a1a] group"
-    >
-      {/* 🖼️ ส่วนแสดงรูปภาพพื้นหลัง */}
-      {r.BackgroundImage && (
-        <img 
-          src={getImageUrl(r.BackgroundImage)} 
-          className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" 
-          alt={r.RoomName} 
-        />
-      )}
-      
-      {/* แถบสีดำจางๆ เพื่อให้ชื่อหมวดหมู่เด่นขึ้น */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-      
-      {/* ชื่อหมวดหมู่ (เช่น ห้องนอน, โต๊ะคอม) */}
-      <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter text-white">
-        {r.RoomName}
-      </span>
-    </button>
-  ))}
-</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {rooms.map((r: any) => (
+              <button 
+                key={r.RoomName} 
+                onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
+                className="relative h-48 rounded-3xl overflow-hidden active:scale-95 transition-all border border-white/5 bg-[#1a1a1a] group"
+              >
+                {r.BackgroundImage && (
+                  <img 
+                    src={getImageUrl(r.BackgroundImage)} 
+                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" 
+                    alt={r.RoomName} 
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter text-white">
+                  {r.RoomName}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
       ) : (
         <div className="animate-fadeIn">
-          {/* 🎯 FIXED HEADER - ค้างไว้ข้างบนเสมอ */}
           <header className="fixed top-0 left-0 right-0 bg-[#121212]/90 backdrop-blur-2xl z-[80] border-b border-white/5">
             <div className="max-w-7xl mx-auto">
-              {/* Top Row: Back Button & Title */}
               <div className="flex items-center justify-between p-4">
                 <button onClick={() => setSelectedRoom(null)} 
                   className="flex items-center justify-center w-12 h-12 rounded-full bg-white/10 active:bg-[#FE2C55] transition-colors">
-                  <span className="text-2xl font-bold">✕</span>
+                  <span className="text-2xl font-bold text-white">✕</span>
                 </button>
-                <h2 className="text-lg font-black uppercase italic tracking-tight">{selectedRoom}</h2>
+                <h2 className="text-lg font-black uppercase italic tracking-tight text-white">{selectedRoom}</h2>
                 <div className="w-12"></div>
               </div>
 
-              {/* Bottom Row: Horizontal Room Switcher (ทางลัดเปลี่ยนหมวด) */}
               <div className="flex overflow-x-auto no-scrollbar gap-2 px-4 pb-4">
                 {rooms.map((r: any) => (
                   <button 
@@ -169,11 +160,9 @@ export default function Home() {
             </div>
           </header>
 
-          {/* Spacer ให้เนื้อหาไม่โดน Header ทับ */}
           <div className="h-[140px]"></div>
 
           <main className="max-w-7xl mx-auto p-4 pt-2">
-            {/* Search bar inside content */}
             <div className="mb-6 px-1">
                 <input type="text" placeholder={`ค้นหาใน ${selectedRoom}...`} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm focus:outline-none focus:border-[#FE2C55] text-white placeholder:text-gray-600" />
@@ -209,7 +198,6 @@ export default function Home() {
               })}
             </div>
 
-            {/* ปุ่มกลับหน้าแรกอันใหญ่อีกอันด้านล่างสุด */}
             <div className="mt-20 flex flex-col items-center gap-4">
                <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} 
                 className="bg-white/5 border border-white/10 text-gray-400 px-10 py-4 rounded-full text-sm font-bold uppercase hover:bg-white/10 transition-all">
