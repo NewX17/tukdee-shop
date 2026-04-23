@@ -84,55 +84,60 @@ export default function Home() {
 
     return (
       <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
-           className="bg-white rounded-[4px] overflow-hidden flex flex-col shadow-sm border border-gray-200 cursor-pointer pb-2">
+           className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-200 cursor-pointer pb-2.5 hover:shadow-md transition-shadow">
         
         <div className="relative aspect-square bg-gray-100">
           <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
           
           {/* ป้าย Mall ซ้ายบนสุด */}
           {isMall && (
-            <div className="absolute top-0 left-0 bg-[#010101] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-br-[4px] z-10"
-                 style={{ boxShadow: '-1px 0 0 #25F4EE, 1px 0 0 #FE2C55' }}>
+            <div className="absolute top-1.5 left-1.5 bg-[#010101] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-[3px] z-10 tracking-wide"
+                 style={{ boxShadow: '-1.5px 0 0 #25F4EE, 1.5px 0 0 #FE2C55' }}>
               Mall
             </div>
           )}
 
           {/* ป้าย % ลดราคา ขวาบน */}
           {discountNum > 0 && (
-            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[11px] font-bold px-1.5 py-0.5 rounded-bl-[4px] z-10">
+            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[11px] font-bold px-1.5 py-0.5 rounded-bl-md z-10">
               -{discountNum}%
             </div>
           )}
 
-          {/* ป้าย XTRA ซ้ายล่าง */}
-          <div className="absolute bottom-0 left-0 bg-[#42C8B7] text-white px-1.5 py-0.5 rounded-tr-[4px] z-10">
+          {/* ป้าย XTRA จัดส่งฟรี ซ้ายล่าง */}
+          <div className="absolute bottom-0 left-0 bg-[#42C8B7] text-white px-1.5 py-0.5 rounded-tr-md z-10">
             <p className="text-[10px] font-black italic leading-none">XTRA</p>
             <p className="text-[7px] font-medium leading-none mt-0.5">จัดส่งฟรี*</p>
           </div>
         </div>
         
+        {/* รายละเอียดสินค้า */}
         <div className="px-2 pt-2 flex flex-col flex-grow">
           
-          {/* ✅ หัวใจสำคัญ: ใส่ break-all เพื่อบังคับตัดคำในมือถือให้เต็ม 2 บรรทัดพอดี ไม่มีแหว่ง */}
-          <div className="text-[13px] leading-[18px] line-clamp-2 break-all mb-1 text-[#222222]">
-            {/* ป้ายแบรนด์ดังลดแรง (ขอบฟ้า-แดง) */}
-            {specialTag && (
-              <span className="inline-flex items-center justify-center bg-[#111111] text-white text-[9px] font-bold px-1.5 rounded-[2px] mr-1 align-text-bottom h-[15px]"
-                    style={{ borderLeft: '1.5px solid #25F4EE', borderRight: '1.5px solid #FE2C55' }}>
-                {specialTag}
-              </span>
-            )}
-            
-            {/* ป้าย Mall สีทองคู่กับชื่อ */}
-            {isMall && (
-              <span className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#EAD09D] text-[9px] font-bold px-1.5 rounded-[2px] mr-1 align-text-bottom h-[15px]">
-                Mall
-              </span>
-            )}
-            
-            {p["ชื่อสินค้า"]}
+          {/* ✅ แก้ปัญหาคำขาด: ถอด break-all ออก และล็อกความสูงให้เป๊ะ 2 บรรทัด */}
+          <div className="w-full mb-1">
+            <div className="text-[13px] leading-[18px] h-[36px] line-clamp-2 break-words text-[#222222]">
+              {/* ป้ายแบรนด์ดังลดแรง: เปลี่ยนเป็น inline-block */}
+              {specialTag && (
+                <span className="inline-block bg-[#111111] text-white text-[9px] font-bold px-1 py-[1px] rounded-[2px] mr-1 align-middle"
+                      style={{ borderLeft: '1.5px solid #25F4EE', borderRight: '1.5px solid #FE2C55', lineHeight: '1.2' }}>
+                  {specialTag}
+                </span>
+              )}
+              
+              {/* ป้าย Mall สีทอง: เปลี่ยนเป็น inline-block */}
+              {isMall && (
+                <span className="inline-block bg-[#1A1A1A] text-[#EAD09D] text-[9px] font-bold px-1 py-[1px] rounded-[2px] mr-1 align-middle"
+                      style={{ lineHeight: '1.2' }}>
+                  Mall
+                </span>
+              )}
+              
+              {p["ชื่อสินค้า"]}
+            </div>
           </div>
 
+          {/* ราคา */}
           <div className="flex items-baseline gap-0.5 mt-auto pt-1">
             <span className="text-[12px] font-bold text-[#FE2C55]">฿</span>
             <span className="text-[18px] font-bold text-[#FE2C55] tracking-tight">{price}</span>
@@ -152,6 +157,7 @@ export default function Home() {
             )}
           </div>
 
+          {/* ดาว & ยอดขาย */}
           <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500">
             <span className="text-[#FFAB00] text-[12px]">★</span>
             <span className="font-bold">{rating}</span>
@@ -159,7 +165,7 @@ export default function Home() {
             <span className="font-medium">ขายได้ {soldCount} ชิ้น</span>
           </div>
 
-          {/* ปุ่ม ซื้อเลย สีแดง */}
+          {/* ปุ่ม ซื้อเลย */}
           <button className="w-full bg-[#FE2C55] text-white mt-2.5 py-1.5 rounded-full text-[12px] font-bold active:bg-red-600 transition-colors">
             ซื้อเลย
           </button>
@@ -177,7 +183,6 @@ export default function Home() {
 
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-3 pt-3 pb-0">
-          
           <div className="flex items-center gap-3 mb-2">
             <div className="relative flex-grow">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
