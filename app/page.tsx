@@ -33,8 +33,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const SHEET_ID = "1qreVNyW_04G_4I4gn_dwy5mxTbVa5FObUEipBWGjWMg";
-  const ROOMS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Rooms`;
-  const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Products`;
+  const ROOMS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Rooms&t=${new Date().getTime()}`;
+  const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Products&t=${new Date().getTime()}`;
 
   const getImageUrl = (url: any) => {
     if (!url || typeof url !== 'string') return "";
@@ -74,9 +74,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F8F8F8] text-black font-sans pb-32">
-      
       <RealTimeVisitors />
-
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
           <div className="flex items-center gap-3 mb-3">
@@ -92,53 +90,31 @@ export default function Home() {
             </div>
             <button className="text-[#FE2C55] font-bold text-sm px-2">ค้นหา</button>
           </div>
-
           <div className="flex overflow-x-auto no-scrollbar gap-6">
-            <button 
-              onClick={() => setSelectedRoom(null)}
-              className={`pb-2 text-[15px] whitespace-nowrap font-bold transition-all ${!selectedRoom ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}
-            >
-              หน้าแรก
-            </button>
+            <button onClick={() => setSelectedRoom(null)} className={`pb-2 text-[15px] whitespace-nowrap font-bold transition-all ${!selectedRoom ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}>หน้าแรก</button>
             {rooms.map((r: any) => (
-              <button 
-                key={r.RoomName} 
-                onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
-                className={`pb-2 text-[15px] whitespace-nowrap font-bold transition-all ${selectedRoom === r.RoomName ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}
-              >
-                {r.RoomName}
-              </button>
+              <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} className={`pb-2 text-[15px] whitespace-nowrap font-bold transition-all ${selectedRoom === r.RoomName ? 'text-black border-b-2 border-black' : 'text-gray-400'}`}>{r.RoomName}</button>
             ))}
           </div>
         </div>
       </header>
-
       <div className="h-[125px]"></div>
-
       <main className="max-w-7xl mx-auto p-4">
         {!selectedRoom ? (
-          /* --- หน้าแรก --- */
           <div className="animate-fadeIn">
-             <div className="text-center mb-8 py-6">
-                <h1 className="text-5xl font-black mb-1 italic tracking-tighter text-black">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
-                <p className="text-gray-400 tracking-[0.3em] text-[8px] font-bold uppercase">Premium Selection</p>
-             </div>
-
+             <div className="text-center mb-8 py-6"><h1 className="text-5xl font-black mb-1 italic tracking-tighter text-black">ถูกดี<span className="text-[#FE2C55]">.</span></h1></div>
              <div className="mb-10">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-xl">🔥</span>
-                  <h3 className="text-lg font-black uppercase italic">Flash Sale ลดแรงวันนี้</h3>
-                </div>
+                <div className="flex items-center gap-2 mb-4"><span className="text-xl">🔥</span><h3 className="text-lg font-black uppercase italic">Flash Sale ลดแรงวันนี้</h3></div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {flashSaleProducts.map((p: any, i: number) => {
-                    const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
+                    const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === 'mall';
                     return (
                       <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 active:scale-95 transition-transform">
                         <div className="aspect-square bg-gray-50 relative">
                           <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
                           <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">-{p["ส่วนลด"]}%</div>
-                          {/* ✅ ป้าย Mall สีดำ ตามรูปตัวอย่างที่ 2 */}
-                          {isMall && <div className="absolute top-0 left-0 bg-black text-white text-[8px] font-black px-1.5 py-0.5 rounded-br-sm">Mall</div>}
+                          {/* ✅ ป้าย Mall สีแดง ชัดๆ ที่หน้าแรก (Flash Sale) */}
+                          {isMall && <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[9px] font-extrabold px-2 py-0.5 rounded-br-md shadow-sm">Mall</div>}
                         </div>
                         <div className="p-3">
                           <p className="text-[11px] font-bold line-clamp-1 text-gray-500">{p["ชื่อสินค้า"]}</p>
@@ -149,12 +125,10 @@ export default function Home() {
                   })}
                 </div>
              </div>
-
              <h3 className="text-lg font-black uppercase italic mb-5">เลือกตามหมวดหมู่</h3>
              <div className="grid grid-cols-1 gap-4">
                 {rooms.map((r: any) => (
-                  <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
-                    className="relative h-44 rounded-2xl overflow-hidden active:scale-[0.98] transition-all border border-gray-100 group">
+                  <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} className="relative h-44 rounded-2xl overflow-hidden active:scale-[0.98] transition-all border border-gray-100 group">
                     <img src={getImageUrl(r.BackgroundImage)} className="absolute inset-0 w-full h-full object-cover" alt="" />
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all"></div>
                     <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter text-white">{r.RoomName}</span>
@@ -163,63 +137,35 @@ export default function Home() {
              </div>
           </div>
         ) : (
-          /* --- หน้ารายการสินค้า --- */
           <div className="grid grid-cols-2 gap-2 animate-fadeIn">
             {filteredProducts.map((p: any, i: number) => {
               const price = String(p["ราคา"] || "0");
-              
-              {/* ✅ ดึงข้อมูลจริงจาก Google Sheets */}
-              const discount = Number(p["ส่วนลด"] || 0); // คอลัมน์ "ส่วนลด" (ตัวเลข)
-              const showCod = p["CODStatus"]?.toString().toLowerCase().trim() === "yes"; // คอลัมน์ "CODStatus" (พิมพ์ yes ถ้าต้องการให้ขึ้น)
-              const rating = p["ดาว"] || "0.0"; // คอลัมน์ "ดาว"
-              const soldCount = p["ยอดขาย"] || "0"; // คอลัมน์ "ยอดขาย"
-              const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall"; // คอลัมน์ "MallStatus"
+              const discount = p["ส่วนลด"];
+              const showCod = p["CODStatus"]?.toString().toLowerCase().trim() === "yes";
+              const rating = p["ดาว"] || "0.0";
+              const soldCount = p["ยอดขาย"] || "0";
+              const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
 
               return (
-                <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
-                  className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-50 active:opacity-70">
+                <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-50 active:opacity-70">
                   <div className="relative aspect-square">
                     <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                    
-                    {/* ✅ ป้าย Mall สีดำ ตามรูปตัวอย่างที่ 2 */}
-                    {isMall && (
-                      <div className="absolute top-0 left-0 bg-black text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-md">
-                        Mall
-                      </div>
-                    )}
-
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white">
-                      <span className="text-cyan-400 font-bold">XTRA</span>
-                      <span>จัดส่งฟรี</span>
-                    </div>
+                    {/* ✅ ป้าย Mall สีแดง ชัดๆ ที่หน้ารายการสินค้า (Category) */}
+                    {isMall && <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-br-md shadow-md">Mall</div>}
+                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white"><span className="text-cyan-400 font-bold">XTRA</span><span>จัดส่งฟรี</span></div>
                   </div>
-                  
                   <div className="p-3">
                     <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px]">{p["ชื่อสินค้า"]}</p>
-                    
-                    {/* ✅ ราคา และ ส่วนลดสี่เหลี่ยมสีแดง (ตามรูปตัวอย่างที่ 1) */}
                     <div className="flex items-center gap-2">
-                      <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
-                      {discount > 0 && (
-                        <div className="bg-[#FE2C55] text-white text-[10px] font-bold px-1 py-0.5 rounded-sm">
-                          -{discount}%
-                        </div>
-                      )}
+                        <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
+                        {discount && (
+                            <div className="bg-[#FE2C55] text-white text-[9px] font-bold px-1 rounded-sm">-{discount}%</div>
+                        )}
                     </div>
-                    
-                    {/* ✅ คะแนนดาว, ยอดขาย, และ ป้าย COD (ตามรูปตัวอย่างที่ 1) */}
                     <div className="flex items-center gap-1.5 mt-1">
-                      <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">
-                        ★ {rating}
-                      </div>
-                      <span className="text-[10px] text-gray-400 font-medium border-l border-gray-200 pl-1.5">
-                        ขายได้ {soldCount}
-                      </span>
-                      {showCod && (
-                        <span className="text-[9px] text-gray-500 font-bold border border-gray-300 px-1 py-0 rounded-sm ml-auto">
-                          COD
-                        </span>
-                      )}
+                      <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">★ {rating}</div>
+                      <span className="text-[10px] text-gray-400 font-medium border-l border-gray-200 pl-1.5">ขายได้ {soldCount}</span>
+                      {showCod && <span className="text-[9px] text-gray-500 font-bold border border-gray-300 px-1 rounded-sm ml-auto">COD</span>}
                     </div>
                   </div>
                 </div>
@@ -228,17 +174,9 @@ export default function Home() {
           </div>
         )}
       </main>
-
-      {/* 🏠 ปุ่มหน้าหลักตรงกลาง */}
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
-        <button 
-          onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}}
-          className="bg-black text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-4 border-white"
-        >
-          <span className="text-2xl">🏠</span>
-        </button>
+        <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-black text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-4 border-white"><span className="text-2xl">🏠</span></button>
       </div>
-
     </div>
   );
 }
