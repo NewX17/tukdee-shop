@@ -113,10 +113,11 @@ export default function Home() {
         
         <div className="px-2 pt-2 flex flex-col flex-grow">
           
-          <div className="text-[13px] leading-[18px] line-clamp-2 mb-1 text-[#222222]">
-            {/* ป้ายแบรนด์ดังลดแรง */}
+          {/* ✅ หัวใจสำคัญ: ใส่ break-all เพื่อบังคับตัดคำในมือถือให้เต็ม 2 บรรทัดพอดี ไม่มีแหว่ง */}
+          <div className="text-[13px] leading-[18px] line-clamp-2 break-all mb-1 text-[#222222]">
+            {/* ป้ายแบรนด์ดังลดแรง (ขอบฟ้า-แดง) */}
             {specialTag && (
-              <span className="inline-flex items-center justify-center bg-[#111111] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] mr-1 align-text-bottom leading-none h-[16px]"
+              <span className="inline-flex items-center justify-center bg-[#111111] text-white text-[9px] font-bold px-1.5 rounded-[2px] mr-1 align-text-bottom h-[15px]"
                     style={{ borderLeft: '1.5px solid #25F4EE', borderRight: '1.5px solid #FE2C55' }}>
                 {specialTag}
               </span>
@@ -124,7 +125,7 @@ export default function Home() {
             
             {/* ป้าย Mall สีทองคู่กับชื่อ */}
             {isMall && (
-              <span className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#EAD09D] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] mr-1 align-text-bottom leading-none h-[16px]">
+              <span className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#EAD09D] text-[9px] font-bold px-1.5 rounded-[2px] mr-1 align-text-bottom h-[15px]">
                 Mall
               </span>
             )}
@@ -138,7 +139,7 @@ export default function Home() {
             {oldPrice && <span className="text-[11px] text-gray-400 line-through ml-1">฿{oldPrice}</span>}
           </div>
 
-          {/* ✅ แถวส่งฟรี & COD (ปรับสีให้เป๊ะตามรูปซูม) */}
+          {/* แถวส่งฟรี & COD */}
           <div className="flex items-center gap-1.5 mt-1">
             <span className="text-[10px] text-[#277F74] bg-[#EAF6F3] font-bold flex items-center gap-0.5 px-1.5 py-[2px] rounded-[3px]">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
@@ -151,12 +152,17 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex items-center gap-1 mt-1.5 text-[10px] text-gray-500">
+          <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500">
             <span className="text-[#FFAB00] text-[12px]">★</span>
             <span className="font-bold">{rating}</span>
             <span className="text-gray-300 mx-0.5">|</span>
             <span className="font-medium">ขายได้ {soldCount} ชิ้น</span>
           </div>
+
+          {/* ปุ่ม ซื้อเลย สีแดง */}
+          <button className="w-full bg-[#FE2C55] text-white mt-2.5 py-1.5 rounded-full text-[12px] font-bold active:bg-red-600 transition-colors">
+            ซื้อเลย
+          </button>
 
         </div>
       </div>
