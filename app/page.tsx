@@ -15,7 +15,7 @@ const RealTimeVisitors = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-24 left-4 z-[100] bg-white/95 backdrop-blur-md border border-gray-200 shadow-lg rounded-full px-4 py-2 flex items-center gap-2">
+    <div className="fixed bottom-24 left-4 z-[100] bg-white/95 backdrop-blur-md border border-gray-200 shadow-2xl rounded-full px-4 py-2 flex items-center gap-2">
       <span className="relative flex h-2 w-2">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -59,147 +59,195 @@ export default function Home() {
     fetchAllData();
   }, []);
 
+  const flashSaleProducts = useMemo(() => {
+    return [...products]
+      .sort((a: any, b: any) => Number(b["ส่วนลด"]) - Number(a["ส่วนลด"]))
+      .slice(0, 4);
+  }, [products]);
+
+  const filteredProducts = products.filter((p: any) => 
+    (!selectedRoom || p["กลุ่มสินค้า"] === selectedRoom) && 
+    (p["ชื่อสินค้า"]?.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   const renderProductCard = (p: any, i: number) => {
     const price = String(p["ราคา"] || "0");
-    const discount = Number(p["ส่วนลด"] || 0);
-    const oldPrice = discount > 0 ? Math.floor(Number(price.replace(/,/g,'')) / (1-(discount/100))).toLocaleString() : null;
-    const showCod = p["CODStatus"]?.toString().toLowerCase().trim() === "yes";
+    const discountNum = Number(p["ส่วนลด"] || 0);
+    const priceNum = Number(price.replace(/,/g, ''));
+    const oldPrice = discountNum > 0 ? Math.floor(priceNum / (1 - (discountNum / 100))).toLocaleString() : null;
+    
     const rating = p["ดาว"] || "0.0";
     const soldCount = p["ยอดขาย"] || "0";
     const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
     const specialTag = p["ป้ายพิเศษ"]?.toString().trim();
 
-    // สไตล์ขอบเงา น้ำเงิน-แดง แบบ TikTok
-    const tiktokGlow = { boxShadow: '-1.5px 0 0 #25F4EE, 1.5px 0 0 #FE2C55' };
-
     return (
       <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
-        className="bg-white rounded-xl overflow-hidden flex flex-col shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
-        <div className="relative aspect-square">
+        className="bg-white rounded-xl overflow-hidden flex flex-col shadow-sm active:scale-[0.98] transition-transform cursor-pointer">
+        
+        {/* ส่วนรูปภาพ */}
+        <div className="relative aspect-square bg-gray-50">
           <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
           
-          {/* ✅ ป้าย Mall มุมซ้ายบน ขอบเงา น้ำเงิน-แดง */}
-          {isMall && (
-            <div className="absolute top-2 left-2 bg-black text-white text-[10px] font-black px-1.5 py-0.5 rounded-[4px] z-10" style={tiktokGlow}>
-              Mall
+          {/* ป้าย % ลดราคา (มุมขวาบน) */}
+          {discountNum > 0 && (
+            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[11px] font-bold px-1.5 py-0.5 rounded-bl-lg z-10">
+              -{discountNum}%
             </div>
           )}
 
-          {/* ป้าย % ลดราคา */}
-          {discount > 0 && (
-            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-bl-lg">
-              -{discount}%
-            </div>
-          )}
-
-          {/* ป้าย XTRA */}
-          <div className="absolute bottom-0 left-0 bg-[#42C8B7] text-white px-1.5 py-0.5 rounded-tr-lg">
-            <p className="text-[9px] font-black italic leading-none">XTRA</p>
-            <p className="text-[7px] font-bold leading-none mt-0.5">จัดส่งฟรี*</p>
+          {/* ป้าย XTRA (มุมซ้ายล่าง) */}
+          <div className="absolute bottom-0 left-0 bg-[#42C8B7] text-white px-1.5 py-0.5 rounded-tr-lg z-10">
+            <p className="text-[10px] font-black italic leading-none">XTRA</p>
+            <p className="text-[8px] font-bold leading-none mt-0.5">จัดส่งฟรี*</p>
           </div>
         </div>
         
+        {/* ส่วนรายละเอียดสินค้า */}
         <div className="p-2.5 flex flex-col flex-grow text-black">
-          {/* ✅ ป้ายแบรนด์ดังลดแรง ขอบเงา น้ำเงิน-แดง ต่อด้วยชื่อสินค้า */}
-          <p className="text-[12px] font-medium line-clamp-2 leading-tight mb-2 min-h-[34px]">
+          
+          {/* ชื่อสินค้าพร้อมป้ายแท็ก */}
+          <p className="text-[13px] leading-[18px] line-clamp-2 mb-1.5 min-h-[36px] font-medium text-[#222222]">
+            {/* ✅ ป้ายแบรนด์ดังลดแรง (ขอบฟ้า-แดง) */}
             {specialTag && (
-              <span className="inline-block bg-black text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm mr-1.5 align-middle" style={tiktokGlow}>
+              <span className="bg-[#111111] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] mr-1 inline-block align-text-bottom"
+                    style={{ borderLeft: '2px solid #25F4EE', borderRight: '2px solid #FE2C55' }}>
                 {specialTag}
               </span>
             )}
+            
+            {/* ✅ ป้าย Mall (ต่อท้ายป้ายพิเศษ) */}
+            {isMall && (
+              <span className="bg-[#111111] text-[#F3E2B3] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] mr-1 inline-block align-text-bottom">
+                Mall
+              </span>
+            )}
+            
             {p["ชื่อสินค้า"]}
           </p>
-          
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <span className="text-[18px] font-black text-[#FE2C55]">฿{price}</span>
-            {oldPrice && <span className="text-[10px] text-gray-400 line-through">฿{oldPrice}</span>}
-            {discount > 0 && <span className="border border-[#FE2C55] text-[#FE2C55] text-[9px] font-bold px-1 rounded-sm bg-red-50">-{discount}%</span>}
+
+          {/* ราคาและราคาขีดฆ่า */}
+          <div className="flex items-baseline gap-1 mt-auto">
+            <span className="text-[18px] font-black text-[#FE2C55] tracking-tighter">฿{price}</span>
+            {oldPrice && <span className="text-[11px] text-gray-400 line-through">฿{oldPrice}</span>}
           </div>
 
-          <div className="flex items-center gap-1.5 mb-2">
-            <span className="text-[#00A685] text-[10px] font-bold flex items-center gap-0.5">🚚 ส่งฟรี</span>
-            {/* ✅ ป้าย COD สีส้มจาง ขอบส้ม */}
-            {showCod && (
-              <span className="text-[#F97316] text-[9px] font-bold bg-[#FFF7ED] border border-[#FED7AA] px-1 rounded-sm">COD</span>
-            )}
+          {/* แถวรถส่งฟรี & COD */}
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="text-[10px] text-[#00A685] font-bold flex items-center">🚚 ส่งฟรี</span>
+            {/* ✅ ป้าย COD สีส้มจาง */}
+            <span className="text-[9px] text-[#F97316] font-bold bg-[#FFF7ED] px-1 py-0.5 rounded-sm">COD</span>
           </div>
 
-          <div className="flex items-center gap-1 text-[10px] mt-auto">
-            <span className="text-[#FFAB00]">★</span>
-            <span className="font-bold text-gray-700">{rating}</span>
+          {/* ดาว & ยอดขาย */}
+          <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500">
+            <span className="text-[#FFAB00] text-[12px]">★</span>
+            <span className="font-bold">{rating}</span>
             <span className="text-gray-300 mx-0.5">|</span>
-            {/* ✅ เพิ่มคำว่า "ชิ้น" ต่อท้ายยอดขาย */}
-            <span className="font-medium text-gray-500">ขายได้ {soldCount} ชิ้น</span>
+            {/* ✅ เพิ่มคำว่า ชิ้น */}
+            <span className="font-medium">ขายได้ {soldCount} ชิ้น</span>
           </div>
-
-          <button className="w-full bg-[#FE2C55] text-white py-2 rounded-full text-[13px] font-bold mt-3 active:bg-red-600 transition-colors">
-            ซื้อเลย
-          </button>
         </div>
       </div>
     );
   };
 
-  if (loading) return <div className="min-h-screen bg-white flex items-center justify-center text-[#FE2C55] text-3xl font-black italic">TUKDEE.</div>;
+  if (loading) return <div className="min-h-screen bg-[#121212] flex items-center justify-center text-[#FE2C55] italic text-3xl font-black tracking-tighter">TUKDEE.</div>;
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans pb-32">
-      <RealTimeVisitors />
-      
-      <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="relative flex-grow">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-              <input type="text" placeholder="ค้นหาสินค้าขายดี..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#F1F1F2] border-none rounded-full py-2.5 pl-11 pr-4 text-sm focus:ring-1 focus:ring-[#FE2C55]" />
-            </div>
-            <button className="text-[#FE2C55] font-bold text-sm">ค้นหา</button>
+    <div className="min-h-screen bg-[#121212] text-white font-sans overflow-x-hidden pb-10">
+      {selectedRoom && <RealTimeVisitors />}
+
+      {!selectedRoom ? (
+        <div className="max-w-7xl mx-auto p-4 md:p-10">
+          <div className="text-center mb-10 py-10">
+            <h1 className="text-6xl font-black mb-2 italic tracking-tighter text-white">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
+            <p className="text-gray-500 tracking-[0.4em] text-[10px] font-bold uppercase">Premium Affiliate Selection</p>
           </div>
-          <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2">
-            <button onClick={() => setSelectedRoom(null)} className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[13px] font-bold ${!selectedRoom ? 'bg-[#FE2C55] text-white' : 'bg-gray-100 text-gray-500'}`}>หน้าแรก</button>
+
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="text-xl">🔥</span>
+              <h3 className="text-lg font-black uppercase italic tracking-tight">Flash Sale ลดแรงวันนี้</h3>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {flashSaleProducts.map((p: any, i: number) => renderProductCard(p, i))}
+            </div>
+          </div>
+
+          <h3 className="text-lg font-black uppercase italic tracking-tight mb-5 px-1">เลือกหมวดหมู่</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {rooms.map((r: any) => (
-              <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[13px] font-bold ${selectedRoom === r.RoomName ? 'bg-[#FE2C55] text-white' : 'bg-gray-100 text-gray-500'}`}>{r.RoomName}</button>
+              <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} 
+                className="relative h-44 rounded-2xl overflow-hidden active:scale-95 transition-all border border-white/5 bg-[#1a1a1a] group">
+                <img src={getImageUrl(r.BackgroundImage)} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" alt="" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                <span className="relative z-10 text-2xl font-black uppercase italic tracking-tighter text-white drop-shadow-lg">{r.RoomName}</span>
+              </button>
             ))}
           </div>
         </div>
-      </header>
+      ) : (
+        <div className="animate-fadeIn">
+          <header className="fixed top-0 left-0 right-0 bg-[#121212] z-[80] border-b border-white/10 pb-4">
+            <div className="flex items-center justify-between p-4">
+              <button onClick={() => setSelectedRoom(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 active:bg-white/20 transition-colors">
+                <span className="text-white font-bold text-sm">✕</span>
+              </button>
+              <h2 className="text-md font-bold text-white">{selectedRoom}</h2>
+              <div className="w-8"></div>
+            </div>
 
-      <div className="h-[135px]"></div>
-      
-      <main className="max-w-7xl mx-auto p-4">
-        {!selectedRoom ? (
-          <div>
-            <div className="mb-10">
-                <h3 className="text-lg font-black italic mb-4">🔥 Flash Sale</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {flashSaleProducts.map((p: any, i: number) => renderProductCard(p, i))}
-                </div>
+            <div className="flex overflow-x-auto no-scrollbar gap-2 px-4 pb-4">
+              {rooms.map((r: any) => (
+                <button 
+                  key={r.RoomName} 
+                  onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}}
+                  className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[13px] font-bold transition-all ${
+                    selectedRoom === r.RoomName 
+                    ? 'bg-[#FE2C55] text-white' 
+                    : 'bg-[#2A2A2A] text-gray-300'
+                  }`}
+                >
+                  {r.RoomName}
+                </button>
+              ))}
             </div>
-            <h3 className="text-lg font-black italic mb-4 text-black">หมวดหมู่</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {rooms.map((r: any) => (
-                  <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} className="relative h-44 rounded-2xl overflow-hidden bg-gray-100 group">
-                    <img src={getImageUrl(r.BackgroundImage)} className="absolute inset-0 w-full h-full object-cover opacity-80" alt="" />
-                    <div className="absolute inset-0 bg-black/30"></div>
-                    <span className="relative z-10 text-2xl font-black italic text-white uppercase">{r.RoomName}</span>
-                  </button>
-                ))}
+
+            <div className="px-4">
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                <input 
+                  type="text" 
+                  placeholder={`ค้นหาใน ${selectedRoom}...`} 
+                  value={searchQuery} 
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[#1A1A1A] border border-white/5 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-[#FE2C55] text-white placeholder-gray-500" 
+                />
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {filteredProducts.map((p: any, i: number) => renderProductCard(p, i))}
-          </div>
-        )}
-      </main>
+          </header>
+
+          <div className="h-[180px]"></div>
+
+          <main className="max-w-7xl mx-auto p-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+              {filteredProducts.map((p: any, i: number) => renderProductCard(p, i))}
+            </div>
+
+            <div className="mt-20 flex flex-col items-center gap-4">
+               <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-white/5 border border-white/10 text-gray-400 px-10 py-4 rounded-full text-sm font-bold uppercase hover:bg-white/10 transition-all">← กลับหน้าหลัก</button>
+            </div>
+          </main>
+        </div>
+      )}
 
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
         <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-black text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-2 border-white/20">
           <span className="text-2xl">🏠</span>
         </button>
       </div>
+
     </div>
   );
 }
