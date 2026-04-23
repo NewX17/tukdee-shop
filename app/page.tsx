@@ -75,6 +75,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F8F8F8] text-black font-sans pb-32">
       <RealTimeVisitors />
+      
+      {/* HEADER - เก็บรูปแบบเดิมเป๊ะๆ */}
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
           <div className="flex items-center gap-3 mb-3">
@@ -85,7 +87,7 @@ export default function Home() {
                 placeholder="ค้นหาสินค้าขายดีอันดับ 1..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#F1F1F2] border-none rounded-full py-2.5 pl-11 pr-4 text-sm focus:ring-1 focus:ring-[#FE2C55]"
+                className="w-full bg-[#F1F1F2] border-none rounded-full py-2.5 pl-11 pr-4 text-sm focus:ring-1 focus:ring-[#FE2C55] text-black placeholder:text-gray-500"
               />
             </div>
             <button className="text-[#FE2C55] font-bold text-sm px-2">ค้นหา</button>
@@ -99,12 +101,14 @@ export default function Home() {
         </div>
       </header>
       <div className="h-[125px]"></div>
+      
       <main className="max-w-7xl mx-auto p-4">
         {!selectedRoom ? (
+          /* --- หน้าแรก: Flash Sale + หมวดหมู่ใหญ่ --- */
           <div className="animate-fadeIn">
              <div className="text-center mb-8 py-6"><h1 className="text-5xl font-black mb-1 italic tracking-tighter text-black">ถูกดี<span className="text-[#FE2C55]">.</span></h1></div>
              <div className="mb-10">
-                <div className="flex items-center gap-2 mb-4"><span className="text-xl">🔥</span><h3 className="text-lg font-black uppercase italic">Flash Sale ลดแรงวันนี้</h3></div>
+                <div className="flex items-center gap-2 mb-4"><span className="text-xl">🔥</span><h3 className="text-lg font-black uppercase italic text-black">Flash Sale ลดแรงวันนี้</h3></div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {flashSaleProducts.map((p: any, i: number) => {
                     const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === 'mall';
@@ -113,8 +117,20 @@ export default function Home() {
                         <div className="aspect-square bg-gray-50 relative">
                           <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
                           <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">-{p["ส่วนลด"]}%</div>
-                          {/* ✅ ป้าย Mall สีแดง ชัดๆ ที่หน้าแรก (Flash Sale) */}
-                          {isMall && <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[9px] font-extrabold px-2 py-0.5 rounded-br-md shadow-sm">Mall</div>}
+                          
+                          {/* ✅ 1. ป้าย Mall หน้าแรก สีกรมท่า-ขาว ชัดๆ (เหมือนรูปตัวอย่างสอง) */}
+                          {isMall && (
+                            <div className="absolute top-0 left-0 flex items-center gap-0.5 bg-[#4a5fbd] text-white rounded-br-md overflow-hidden font-sans">
+                              {/* ส่วนโลโก้ M */}
+                              <div className="bg-[#3e51a8] px-1.5 py-0.5 flex items-center justify-center border-r border-white/20">
+                                <span className="text-[11px] font-black leading-none">M</span>
+                              </div>
+                              {/* ส่วนตัวหนังสือ */}
+                              <div className="pr-2 py-0.5">
+                                <span className="text-[10px] font-bold leading-none tracking-tight">Mall</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                         <div className="p-3">
                           <p className="text-[11px] font-bold line-clamp-1 text-gray-500">{p["ชื่อสินค้า"]}</p>
@@ -125,7 +141,7 @@ export default function Home() {
                   })}
                 </div>
              </div>
-             <h3 className="text-lg font-black uppercase italic mb-5">เลือกตามหมวดหมู่</h3>
+             <h3 className="text-lg font-black uppercase italic mb-5 text-black">เลือกตามหมวดหมู่</h3>
              <div className="grid grid-cols-1 gap-4">
                 {rooms.map((r: any) => (
                   <button key={r.RoomName} onClick={() => {setSelectedRoom(r.RoomName); window.scrollTo(0,0);}} className="relative h-44 rounded-2xl overflow-hidden active:scale-[0.98] transition-all border border-gray-100 group">
@@ -137,6 +153,7 @@ export default function Home() {
              </div>
           </div>
         ) : (
+          /* --- หน้ารายการสินค้า: เก็ยรูปแบบเดิมเป๊ะๆ --- */
           <div className="grid grid-cols-2 gap-2 animate-fadeIn">
             {filteredProducts.map((p: any, i: number) => {
               const price = String(p["ราคา"] || "0");
@@ -148,14 +165,30 @@ export default function Home() {
 
               return (
                 <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-50 active:opacity-70">
-                  <div className="relative aspect-square">
+                  <div className="relative aspect-square bg-gray-50">
                     <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                    {/* ✅ ป้าย Mall สีแดง ชัดๆ ที่หน้ารายการสินค้า (Category) */}
-                    {isMall && <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-br-md shadow-md">Mall</div>}
+                    
+                    {/* ✅ 1. ป้าย Mall หน้าหมวดหมู่ สีกรมท่า-ขาว ชัดๆ เป๊ะตามรูปตัวอย่างที่สอง */}
+                    {isMall && (
+                      <div className="absolute top-0 left-0 flex items-center gap-0.5 bg-[#4a5fbd] text-white rounded-br-md overflow-hidden font-sans">
+                        {/* โโลโก้ M */}
+                        <div className="bg-[#3e51a8] px-1.5 py-0.5 flex items-center justify-center border-r border-white/20">
+                          <span className="text-[11px] font-black leading-none">M</span>
+                        </div>
+                        {/* ตัวหนังสือ */}
+                        <div className="pr-2 py-0.5">
+                          <span className="text-[10px] font-bold leading-none tracking-tight">Mall</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* เก็ยรูปแบบเดิมด้านล่างรูปไว้ */}
                     <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white"><span className="text-cyan-400 font-bold">XTRA</span><span>จัดส่งฟรี</span></div>
                   </div>
+                  
+                  {/* รายละเอียดสินค้า - เก็ยรูปแบบเดิมเป๊ะๆ */}
                   <div className="p-3">
-                    <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px]">{p["ชื่อสินค้า"]}</p>
+                    <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px] text-black">{p["ชื่อสินค้า"]}</p>
                     <div className="flex items-center gap-2">
                         <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
                         {discount && (
@@ -174,6 +207,8 @@ export default function Home() {
           </div>
         )}
       </main>
+      
+      {/* ปุ่มหน้าหลักตรงกลาง - รูปแบบเดิมเป๊ะ */}
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
         <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-black text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-4 border-white"><span className="text-2xl">🏠</span></button>
       </div>
