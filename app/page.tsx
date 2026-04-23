@@ -84,78 +84,78 @@ export default function Home() {
 
     return (
       <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
-           // ✅ ปรับความโค้งของการ์ดให้มนขึ้น (rounded-2xl) และเล็กลงนิดหน่อยตามที่ต้องการ
            className="bg-white rounded-2xl overflow-hidden flex flex-col shadow-sm border border-gray-100 active:scale-[0.98] transition-transform group cursor-pointer">
         
         <div className="relative aspect-square bg-gray-50">
           <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
           
-          <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
-              {/* ✅ ป้ายแบรนด์ดังลดแรง ขอบมนขึ้น (rounded-md) ขนาดเล็กลง */}
-              {specialTag && (
-                <div className="flex items-center gap-0.5 bg-[#111111] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-sm"
-                     style={{ borderLeft: '1.5px solid #25F4EE', borderRight: '1.5px solid #FE2C55' }}>
-                  {specialTag}
-                </div>
-              )}
-              {/* ✅ ป้าย Mall มุมซ้ายบน ขอบมนขึ้น (rounded-md) */}
-              {isMall && (
-                <div className="inline-flex items-center bg-[#111111] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-sm self-start tracking-wide"
-                     style={{ boxShadow: '-1.5px 0 0 #25F4EE, 1.5px 0 0 #FE2C55' }}>
-                  Mall
-                </div>
-              )}
-          </div>
-
           {/* ป้ายลดราคา % มุมขวาบน */}
           {discountNum > 0 && (
-            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-bl-xl z-10">
+            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[11px] font-bold px-2 py-0.5 rounded-bl-xl z-10">
               -{discountNum}%
             </div>
           )}
 
           {/* ป้าย XTRA มุมซ้ายล่าง */}
           <div className="absolute bottom-0 left-0 bg-[#42C8B7] text-white px-1.5 py-0.5 rounded-tr-xl z-10">
-            <p className="text-[9px] font-black italic leading-none">XTRA</p>
+            <p className="text-[10px] font-black italic leading-none">XTRA</p>
             <p className="text-[7px] font-medium leading-none mt-0.5">จัดส่งฟรี*</p>
           </div>
         </div>
         
         {/* รายละเอียดสินค้า */}
         <div className="p-2.5 flex-grow flex flex-col bg-white">
-          <p className="text-[12px] md:text-[13px] line-clamp-2 mb-1 text-[#222222] font-medium leading-[18px] min-h-[36px]">
+          
+          {/* ✅ ย้ายป้ายแบรนด์ดัง+Mall มาตรงนี้ หน้าชื่อสินค้าเป๊ะๆ */}
+          <div className="text-[13px] md:text-[14px] line-clamp-2 mb-1.5 text-[#222222] font-medium leading-[20px] min-h-[40px]">
+            {/* ✅ ป้ายแบรนด์ดังลดแรง (ขอบฟ้า-แดง) */}
+            {specialTag && (
+              <span className="inline-flex items-center justify-center bg-[#111111] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[3px] mr-1 align-text-bottom h-[18px]"
+                    style={{ borderLeft: '2px solid #25F4EE', borderRight: '2px solid #FE2C55' }}>
+                {specialTag}
+              </span>
+            )}
+            
+            {/* ✅ ป้าย Mall (สีดำ ตัวหนังสือทอง) วางต่อกัน */}
+            {isMall && (
+              <span className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#EAD09D] text-[10px] font-bold px-1.5 py-0.5 rounded-[3px] mr-1 align-text-bottom h-[18px]">
+                Mall
+              </span>
+            )}
+            
             {p["ชื่อสินค้า"]}
-          </p>
+          </div>
 
           <div className="flex items-baseline gap-1 mt-auto pt-1.5">
             <span className="text-[10px] font-bold text-[#FE2C55]">฿</span>
-            <span className="text-[17px] font-bold text-[#FE2C55] -ml-0.5 tracking-tight">{price}</span>
+            <span className="text-[18px] font-bold text-[#FE2C55] -ml-0.5 tracking-tight">{price}</span>
             {oldPrice && <span className="text-[10px] text-gray-400 line-through ml-0.5">฿{oldPrice}</span>}
           </div>
 
-          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-            <span className="text-[9px] text-[#00A685] font-bold flex items-center gap-0.5 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+            <span className="text-[10px] text-[#00A685] font-bold flex items-center gap-0.5 whitespace-nowrap">
               🚚 ส่งฟรี
             </span>
-            {/* ✅ COD สีส้มจาง ขอบมนขึ้น (rounded-sm) */}
+            {/* ✅ COD สีส้มจาง */}
             {showCod && (
-              <span className="border border-[#FED7AA] text-[#F97316] bg-[#FFF7ED] px-1 py-0.5 rounded-sm text-[8px] font-bold whitespace-nowrap">
+              <span className="border border-[#FED7AA] text-[#F97316] bg-[#FFF7ED] px-1 py-0.5 rounded-sm text-[9px] font-bold whitespace-nowrap">
                 COD
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-1 mt-1.5 text-[9px] text-[#757575] flex-wrap">
+          <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-[#757575] flex-wrap">
             <div className="flex items-center gap-0.5 whitespace-nowrap">
-                <span className="text-[#FFAB00] text-[11px]">★</span>
+                <span className="text-[#FFAB00] text-[12px]">★</span>
                 <span className="font-bold">{rating}</span>
             </div>
             <span className="text-gray-300 mx-0.5">|</span>
+            {/* ✅ เพิ่มคำว่า ชิ้น ต่อท้าย */}
             <span className="font-medium whitespace-nowrap">ขายได้ {soldCount} ชิ้น</span>
           </div>
 
-          {/* ปุ่ม ซื้อเลย โค้งมน */}
-          <button className="w-full bg-[#FE2C55] text-white mt-3 py-2 rounded-full text-[12px] font-bold shadow-md shadow-[#FE2C55]/20 active:bg-red-600 transition-colors">
+          {/* ปุ่ม ซื้อเลย สีแดง */}
+          <button className="w-full bg-[#FE2C55] text-white mt-3 py-2.5 rounded-full text-[13px] font-bold shadow-md shadow-[#FE2C55]/20 active:bg-red-600 transition-colors">
             ซื้อเลย
           </button>
         </div>
@@ -255,7 +255,7 @@ export default function Home() {
       )}
 
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
-        <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-black text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-2 border-white/20">
+        <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-[#1A1A1A] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-2 border-white/10">
           <span className="text-2xl">🏠</span>
         </button>
       </div>
