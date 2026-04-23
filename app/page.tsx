@@ -77,7 +77,6 @@ export default function Home() {
       
       <RealTimeVisitors />
 
-      {/* Header TikTok Style */}
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
           <div className="flex items-center gap-3 mb-3">
@@ -125,7 +124,6 @@ export default function Home() {
                 <p className="text-gray-400 tracking-[0.3em] text-[8px] font-bold uppercase">Premium Selection</p>
              </div>
 
-             {/* Flash Sale Section */}
              <div className="mb-10">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-xl">🔥</span>
@@ -139,7 +137,8 @@ export default function Home() {
                         <div className="aspect-square bg-gray-50 relative">
                           <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
                           <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">-{p["ส่วนลด"]}%</div>
-                          {isMall && <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[8px] font-black px-1.5 py-0.5 rounded-br-sm">Mall</div>}
+                          {/* ✅ ป้าย Mall สีดำ ตามรูปตัวอย่างที่ 2 */}
+                          {isMall && <div className="absolute top-0 left-0 bg-black text-white text-[8px] font-black px-1.5 py-0.5 rounded-br-sm">Mall</div>}
                         </div>
                         <div className="p-3">
                           <p className="text-[11px] font-bold line-clamp-1 text-gray-500">{p["ชื่อสินค้า"]}</p>
@@ -169,11 +168,12 @@ export default function Home() {
             {filteredProducts.map((p: any, i: number) => {
               const price = String(p["ราคา"] || "0");
               
-              // 🎯 ดึงข้อมูลจากคอลัมน์จริงใน Google Sheets
-              const rating = p["ดาว"] || ""; 
-              const soldCount = p["ยอดขาย"] || "";
-              const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
-              const specialTag = p["ป้ายพิเศษ"]?.toString().trim() || "XTRA";
+              {/* ✅ ดึงข้อมูลจริงจาก Google Sheets */}
+              const discount = Number(p["ส่วนลด"] || 0); // คอลัมน์ "ส่วนลด" (ตัวเลข)
+              const showCod = p["CODStatus"]?.toString().toLowerCase().trim() === "yes"; // คอลัมน์ "CODStatus" (พิมพ์ yes ถ้าต้องการให้ขึ้น)
+              const rating = p["ดาว"] || "0.0"; // คอลัมน์ "ดาว"
+              const soldCount = p["ยอดขาย"] || "0"; // คอลัมน์ "ยอดขาย"
+              const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall"; // คอลัมน์ "MallStatus"
 
               return (
                 <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
@@ -181,33 +181,43 @@ export default function Home() {
                   <div className="relative aspect-square">
                     <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
                     
-                    {/* ✅ ป้าย Mall (จะขึ้นก็ต่อเมื่อในชีตพิมพ์ว่า mall) */}
+                    {/* ✅ ป้าย Mall สีดำ ตามรูปตัวอย่างที่ 2 */}
                     {isMall && (
-                      <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-md">
+                      <div className="absolute top-0 left-0 bg-black text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-md">
                         Mall
                       </div>
                     )}
 
-                    {/* ✅ ป้ายพิเศษ (ดึงจากชีต เช่น "แบรนด์ดังลดแรง") */}
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-[9px] text-white">
-                      <span className="text-cyan-400 font-bold">{specialTag}</span>
+                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white">
+                      <span className="text-cyan-400 font-bold">XTRA</span>
+                      <span>จัดส่งฟรี</span>
                     </div>
                   </div>
                   
                   <div className="p-3">
                     <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px]">{p["ชื่อสินค้า"]}</p>
-                    <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
                     
-                    {/* ✅ ข้อมูลดาวและยอดขาย (ดึงจากชีตเป๊ะๆ) */}
-                    <div className="flex items-center gap-1.5 mt-1">
-                      {rating && (
-                        <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">
-                          ★ {rating}
+                    {/* ✅ ราคา และ ส่วนลดสี่เหลี่ยมสีแดง (ตามรูปตัวอย่างที่ 1) */}
+                    <div className="flex items-center gap-2">
+                      <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
+                      {discount > 0 && (
+                        <div className="bg-[#FE2C55] text-white text-[10px] font-bold px-1 py-0.5 rounded-sm">
+                          -{discount}%
                         </div>
                       )}
-                      {soldCount && (
-                        <span className={`text-[10px] text-gray-400 font-medium ${rating ? 'border-l border-gray-200 pl-1.5' : ''}`}>
-                          ขายได้ {soldCount} ชิ้น
+                    </div>
+                    
+                    {/* ✅ คะแนนดาว, ยอดขาย, และ ป้าย COD (ตามรูปตัวอย่างที่ 1) */}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">
+                        ★ {rating}
+                      </div>
+                      <span className="text-[10px] text-gray-400 font-medium border-l border-gray-200 pl-1.5">
+                        ขายได้ {soldCount}
+                      </span>
+                      {showCod && (
+                        <span className="text-[9px] text-gray-500 font-bold border border-gray-300 px-1 py-0 rounded-sm ml-auto">
+                          COD
                         </span>
                       )}
                     </div>
