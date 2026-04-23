@@ -70,13 +70,97 @@ export default function Home() {
     (p["ชื่อสินค้า"]?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+  // ฟังก์ชันช่วยสร้างการ์ดสินค้าให้เหมือนกันทั้งหน้าแรกและหน้าหมวดหมู่
+  const renderProductCard = (p: any, i: number) => {
+    const price = String(p["ราคา"] || "0");
+    const priceNum = Number(price.replace(/,/g, ''));
+    const discountNum = Number(p["ส่วนลด"] || 0);
+    // คำนวณราคาเต็ม (ขีดฆ่า)
+    const oldPrice = discountNum > 0 ? Math.round(priceNum / (1 - discountNum / 100)).toLocaleString() : null;
+    
+    const showCod = p["CODStatus"]?.toString().toLowerCase().trim() === "yes";
+    const rating = p["ดาว"] || "0.0";
+    const soldCount = p["ยอดขาย"] || "0";
+    const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
+    const specialTag = p["ป้ายพิเศษ"]?.toString().trim();
+
+    return (
+      <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-md overflow-hidden flex flex-col shadow-sm border border-gray-100 active:opacity-70">
+        <div className="relative aspect-square bg-gray-50">
+          <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
+          
+          {/* ✅ 1. ป้าย Mall มุมซ้ายบน สีดำขอบเหลือบแสง (TikTok Style เป๊ะๆ) */}
+          {isMall && (
+            <div className="absolute top-1.5 left-1.5 bg-[#010101] text-white text-[10px] font-bold px-1.5 py-px rounded-[4px] z-10 tracking-wide"
+                 style={{ boxShadow: '-1.5px 0 0 #25F4EE, 1.5px 0 0 #FE2C55' }}>
+              Mall
+            </div>
+          )}
+
+          {/* ✅ 2. ป้ายส่วนลด มุมขวาบน (สีแดง) */}
+          {discountNum > 0 && (
+            <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[11px] font-medium px-1.5 py-0.5 rounded-bl-lg z-10">
+              -{discountNum}%
+            </div>
+          )}
+
+          {/* ✅ 3. ป้าย XTRA จัดส่งฟรี มุมซ้ายล่าง */}
+          <div className="absolute bottom-0 left-0 bg-[#42C8B7] text-white px-1.5 py-0.5 rounded-tr-lg z-10">
+            <p className="text-[9px] font-black italic leading-none">XTRA</p>
+            <p className="text-[7px] font-medium leading-none mt-0.5">จัดส่งฟรี*</p>
+          </div>
+        </div>
+        
+        {/* รายละเอียดสินค้า */}
+        <div className="p-2 flex-grow flex flex-col">
+          <p className="text-[12px] line-clamp-2 mb-1 text-[#222222] font-medium leading-[16px]">
+            {/* ป้าย แบรนด์ดังลดแรง (ถ้ามี) */}
+            {specialTag && (
+              <span className="inline-block bg-black text-white text-[9px] font-medium px-1 rounded-sm mr-1 align-middle">
+                {specialTag}
+              </span>
+            )}
+            {p["ชื่อสินค้า"]}
+          </p>
+
+          {/* ราคา และ ราคาขีดฆ่า */}
+          <div className="flex items-baseline gap-1 mt-auto pt-1">
+            <span className="text-[10px] font-bold text-[#FE2C55]">฿</span>
+            <span className="text-[16px] font-bold text-[#FE2C55] -ml-0.5 tracking-tight">{price}</span>
+            {oldPrice && <span className="text-[10px] text-gray-400 line-through ml-0.5">฿{oldPrice}</span>}
+          </div>
+
+          {/* ส่งฟรี และ COD */}
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="text-[9px] text-[#00A685] font-medium flex items-center gap-0.5">
+              🚚 ส่งฟรี
+            </span>
+            {showCod && (
+              <span className="text-[9px] text-[#757575] font-medium bg-[#F5F5F5] px-1 py-0.5 rounded-[2px]">
+                COD
+              </span>
+            )}
+          </div>
+
+          {/* ดาว และ ยอดขาย */}
+          <div className="flex items-center gap-1 mt-1 text-[10px] text-[#757575]">
+            <span className="text-[#FACC15] text-[11px]">★</span>
+            <span className="font-medium">{rating}</span>
+            <span className="text-gray-300 mx-0.5">|</span>
+            <span className="font-medium">ขายได้ {soldCount}</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) return <div className="min-h-screen bg-white flex items-center justify-center text-[#FE2C55] text-2xl font-black italic">TUKDEE.</div>;
 
   return (
     <div className="min-h-screen bg-[#F8F8F8] text-black font-sans pb-32">
       <RealTimeVisitors />
       
-      {/* HEADER - เก็บรูปแบบเดิมเป๊ะๆ */}
+      {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
           <div className="flex items-center gap-3 mb-3">
@@ -104,41 +188,13 @@ export default function Home() {
       
       <main className="max-w-7xl mx-auto p-4">
         {!selectedRoom ? (
-          /* --- หน้าแรก: Flash Sale + หมวดหมู่ใหญ่ --- */
           <div className="animate-fadeIn">
              <div className="text-center mb-8 py-6"><h1 className="text-5xl font-black mb-1 italic tracking-tighter text-black">ถูกดี<span className="text-[#FE2C55]">.</span></h1></div>
              <div className="mb-10">
                 <div className="flex items-center gap-2 mb-4"><span className="text-xl">🔥</span><h3 className="text-lg font-black uppercase italic text-black">Flash Sale ลดแรงวันนี้</h3></div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {flashSaleProducts.map((p: any, i: number) => {
-                    const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === 'mall';
-                    return (
-                      <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 active:scale-95 transition-transform">
-                        <div className="aspect-square bg-gray-50 relative">
-                          <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                          <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">-{p["ส่วนลด"]}%</div>
-                          
-                          {/* ✅ 1. ป้าย Mall หน้าแรก สีกรมท่า-ขาว ชัดๆ (เหมือนรูปตัวอย่างสอง) */}
-                          {isMall && (
-                            <div className="absolute top-0 left-0 flex items-center gap-0.5 bg-[#4a5fbd] text-white rounded-br-md overflow-hidden font-sans">
-                              {/* ส่วนโลโก้ M */}
-                              <div className="bg-[#3e51a8] px-1.5 py-0.5 flex items-center justify-center border-r border-white/20">
-                                <span className="text-[11px] font-black leading-none">M</span>
-                              </div>
-                              {/* ส่วนตัวหนังสือ */}
-                              <div className="pr-2 py-0.5">
-                                <span className="text-[10px] font-bold leading-none tracking-tight">Mall</span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-3">
-                          <p className="text-[11px] font-bold line-clamp-1 text-gray-500">{p["ชื่อสินค้า"]}</p>
-                          <div className="text-[#FE2C55] font-black text-lg">฿{p["ราคา"]}</div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                  {/* ใช้ฟังก์ชันสร้างการ์ดที่เหมือนกัน */}
+                  {flashSaleProducts.map((p: any, i: number) => renderProductCard(p, i))}
                 </div>
              </div>
              <h3 className="text-lg font-black uppercase italic mb-5 text-black">เลือกตามหมวดหมู่</h3>
@@ -153,62 +209,14 @@ export default function Home() {
              </div>
           </div>
         ) : (
-          /* --- หน้ารายการสินค้า: เก็ยรูปแบบเดิมเป๊ะๆ --- */
-          <div className="grid grid-cols-2 gap-2 animate-fadeIn">
-            {filteredProducts.map((p: any, i: number) => {
-              const price = String(p["ราคา"] || "0");
-              const discount = p["ส่วนลด"];
-              const showCod = p["CODStatus"]?.toString().toLowerCase().trim() === "yes";
-              const rating = p["ดาว"] || "0.0";
-              const soldCount = p["ยอดขาย"] || "0";
-              const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
-
-              return (
-                <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-50 active:opacity-70">
-                  <div className="relative aspect-square bg-gray-50">
-                    <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                    
-                    {/* ✅ 1. ป้าย Mall หน้าหมวดหมู่ สีกรมท่า-ขาว ชัดๆ เป๊ะตามรูปตัวอย่างที่สอง */}
-                    {isMall && (
-                      <div className="absolute top-0 left-0 flex items-center gap-0.5 bg-[#4a5fbd] text-white rounded-br-md overflow-hidden font-sans">
-                        {/* โโลโก้ M */}
-                        <div className="bg-[#3e51a8] px-1.5 py-0.5 flex items-center justify-center border-r border-white/20">
-                          <span className="text-[11px] font-black leading-none">M</span>
-                        </div>
-                        {/* ตัวหนังสือ */}
-                        <div className="pr-2 py-0.5">
-                          <span className="text-[10px] font-bold leading-none tracking-tight">Mall</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* เก็ยรูปแบบเดิมด้านล่างรูปไว้ */}
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white"><span className="text-cyan-400 font-bold">XTRA</span><span>จัดส่งฟรี</span></div>
-                  </div>
-                  
-                  {/* รายละเอียดสินค้า - เก็ยรูปแบบเดิมเป๊ะๆ */}
-                  <div className="p-3">
-                    <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px] text-black">{p["ชื่อสินค้า"]}</p>
-                    <div className="flex items-center gap-2">
-                        <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
-                        {discount && (
-                            <div className="bg-[#FE2C55] text-white text-[9px] font-bold px-1 rounded-sm">-{discount}%</div>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">★ {rating}</div>
-                      <span className="text-[10px] text-gray-400 font-medium border-l border-gray-200 pl-1.5">ขายได้ {soldCount}</span>
-                      {showCod && <span className="text-[9px] text-gray-500 font-bold border border-gray-300 px-1 rounded-sm ml-auto">COD</span>}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-2 gap-2.5 animate-fadeIn">
+            {/* ใช้ฟังก์ชันสร้างการ์ดที่เหมือนกัน */}
+            {filteredProducts.map((p: any, i: number) => renderProductCard(p, i))}
           </div>
         )}
       </main>
       
-      {/* ปุ่มหน้าหลักตรงกลาง - รูปแบบเดิมเป๊ะ */}
+      {/* ปุ่มหน้าหลักตรงกลาง */}
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
         <button onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}} className="bg-black text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl active:scale-90 transition-all pointer-events-auto border-4 border-white"><span className="text-2xl">🏠</span></button>
       </div>
