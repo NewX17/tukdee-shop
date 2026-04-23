@@ -81,7 +81,11 @@ export default function Home() {
     const rating = p["ดาว"] || "0.0";
     const soldCount = p["ยอดขาย"] || "0";
     const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
-    const specialTag = p["ป้ายพิเศษ"]?.toString().trim();
+    
+    // ✅ ดักจับคำว่า TopChoice ใน Sheet เพื่อไม่ให้ไปใช้ป้ายสีดำ
+    const rawSpecialTag = p["ป้ายพิเศษ"]?.toString().trim();
+    const isTypedTopChoice = rawSpecialTag?.toLowerCase() === "topchoice";
+    const specialTag = isTypedTopChoice ? null : rawSpecialTag;
     
     const showTopChoice = !isMall && !specialTag;
 
@@ -115,6 +119,7 @@ export default function Home() {
           
           <div className="w-full mb-1">
             <div className="text-[13px] leading-[18px] h-[36px] line-clamp-2 break-words text-[#222222]">
+              {/* ป้ายแบรนด์ดังลดแรง (ถ้ามีและไม่ใช่คำว่า TopChoice) */}
               {specialTag && (
                 <span className="inline-block bg-[#111111] text-white text-[9px] font-bold px-1 py-[1px] rounded-[2px] mr-1 align-middle"
                       style={{ borderLeft: '1.5px solid #25F4EE', borderRight: '1.5px solid #FE2C55', lineHeight: '1.2' }}>
@@ -122,6 +127,7 @@ export default function Home() {
                 </span>
               )}
               
+              {/* ป้าย Mall สีทอง */}
               {isMall && (
                 <span className="inline-block bg-[#1A1A1A] text-[#EAD09D] text-[9px] font-bold px-1 py-[1px] rounded-[2px] mr-1 align-middle"
                       style={{ lineHeight: '1.2' }}>
@@ -129,7 +135,7 @@ export default function Home() {
                 </span>
               )}
 
-              {/* ✅ แก้ไขตรงนี้: ป้าย TopChoice พื้นส้มอ่อน ตัวหนังสือสีดำ ตามรูปซ้ายเป๊ะๆ */}
+              {/* ✅ ป้าย TopChoice (สีดำ พื้นส้ม) เหมือนกันเป๊ะทุกอันแน่นอน */}
               {showTopChoice && (
                 <span className="inline-block bg-[#FFE0B2] text-black text-[9px] font-bold px-1.5 py-[1px] rounded-[2px] mr-1 align-middle"
                       style={{ lineHeight: '1.2' }}>
