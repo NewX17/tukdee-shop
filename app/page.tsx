@@ -77,6 +77,7 @@ export default function Home() {
       
       <RealTimeVisitors />
 
+      {/* Header TikTok Style */}
       <header className="fixed top-0 left-0 right-0 bg-white z-[80] shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 pt-4 pb-2">
           <div className="flex items-center gap-3 mb-3">
@@ -117,31 +118,36 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto p-4">
         {!selectedRoom ? (
+          /* --- หน้าแรก --- */
           <div className="animate-fadeIn">
              <div className="text-center mb-8 py-6">
                 <h1 className="text-5xl font-black mb-1 italic tracking-tighter text-black">ถูกดี<span className="text-[#FE2C55]">.</span></h1>
                 <p className="text-gray-400 tracking-[0.3em] text-[8px] font-bold uppercase">Premium Selection</p>
              </div>
 
+             {/* Flash Sale Section */}
              <div className="mb-10">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-xl">🔥</span>
                   <h3 className="text-lg font-black uppercase italic">Flash Sale ลดแรงวันนี้</h3>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {flashSaleProducts.map((p: any, i: number) => (
-                    <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 active:scale-95 transition-transform">
-                      <div className="aspect-square bg-gray-50 relative">
-                        <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                        <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">-{p["ส่วนลด"]}%</div>
-                        <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[8px] font-black px-1 py-0.5 rounded-br-sm">Mall</div>
+                  {flashSaleProducts.map((p: any, i: number) => {
+                    const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
+                    return (
+                      <div key={i} onClick={() => window.open(p["ลิงก์สั่งซื้อ"], '_blank')} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 active:scale-95 transition-transform">
+                        <div className="aspect-square bg-gray-50 relative">
+                          <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
+                          <div className="absolute top-0 right-0 bg-[#FE2C55] text-white text-[10px] font-bold px-1.5 py-0.5">-{p["ส่วนลด"]}%</div>
+                          {isMall && <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[8px] font-black px-1.5 py-0.5 rounded-br-sm">Mall</div>}
+                        </div>
+                        <div className="p-3">
+                          <p className="text-[11px] font-bold line-clamp-1 text-gray-500">{p["ชื่อสินค้า"]}</p>
+                          <div className="text-[#FE2C55] font-black text-lg">฿{p["ราคา"]}</div>
+                        </div>
                       </div>
-                      <div className="p-3">
-                        <p className="text-[11px] font-bold line-clamp-1 text-gray-500">{p["ชื่อสินค้า"]}</p>
-                        <div className="text-[#FE2C55] font-black text-lg">฿{p["ราคา"]}</div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
              </div>
 
@@ -158,36 +164,52 @@ export default function Home() {
              </div>
           </div>
         ) : (
+          /* --- หน้ารายการสินค้า --- */
           <div className="grid grid-cols-2 gap-2 animate-fadeIn">
             {filteredProducts.map((p: any, i: number) => {
               const price = String(p["ราคา"] || "0");
-              {/* ✅ ดึงข้อมูลจากคอลัมน์จริงใน Sheets ของคุณ */}
-              const rating = p["คะแนน"] || "0.0"; 
-              const soldCount = p["ยอดขาย"] || "0";
+              
+              // 🎯 ดึงข้อมูลจากคอลัมน์จริงใน Google Sheets
+              const rating = p["ดาว"] || ""; 
+              const soldCount = p["ยอดขาย"] || "";
+              const isMall = p["MallStatus"]?.toString().toLowerCase().trim() === "mall";
+              const specialTag = p["ป้ายพิเศษ"]?.toString().trim() || "XTRA";
 
               return (
                 <div key={i} onClick={() => p["ลิงก์สั่งซื้อ"] && window.open(p["ลิงก์สั่งซื้อ"], '_blank')} 
                   className="bg-white rounded-lg overflow-hidden flex flex-col shadow-sm border border-gray-50 active:opacity-70">
                   <div className="relative aspect-square">
                     <img src={getImageUrl(p["รูปภาพ"])} className="w-full h-full object-cover" alt="" />
-                    <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-md">Mall</div>
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 rounded text-[9px] text-white">
-                      <span className="text-cyan-400 font-bold">XTRA</span>
-                      <span>จัดส่งฟรี</span>
+                    
+                    {/* ✅ ป้าย Mall (จะขึ้นก็ต่อเมื่อในชีตพิมพ์ว่า mall) */}
+                    {isMall && (
+                      <div className="absolute top-0 left-0 bg-[#FE2C55] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-md">
+                        Mall
+                      </div>
+                    )}
+
+                    {/* ✅ ป้ายพิเศษ (ดึงจากชีต เช่น "แบรนด์ดังลดแรง") */}
+                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-[9px] text-white">
+                      <span className="text-cyan-400 font-bold">{specialTag}</span>
                     </div>
                   </div>
+                  
                   <div className="p-3">
                     <p className="text-[13px] line-clamp-2 mb-2 font-medium leading-tight min-h-[36px]">{p["ชื่อสินค้า"]}</p>
                     <div className="text-[17px] font-bold text-[#FE2C55]">฿{price}</div>
                     
-                    {/* ✅ แสดงคะแนนและยอดขายตามที่คุณกรอกในชีตเป๊ะๆ */}
+                    {/* ✅ ข้อมูลดาวและยอดขาย (ดึงจากชีตเป๊ะๆ) */}
                     <div className="flex items-center gap-1.5 mt-1">
-                      <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">
-                        ★ {rating}
-                      </div>
-                      <span className="text-[10px] text-gray-400 font-medium border-l border-gray-200 pl-1.5">
-                        ขายได้ {soldCount} ชิ้น
-                      </span>
+                      {rating && (
+                        <div className="flex items-center text-[10px] text-[#FFAB00] font-bold">
+                          ★ {rating}
+                        </div>
+                      )}
+                      {soldCount && (
+                        <span className={`text-[10px] text-gray-400 font-medium ${rating ? 'border-l border-gray-200 pl-1.5' : ''}`}>
+                          ขายได้ {soldCount} ชิ้น
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -197,6 +219,7 @@ export default function Home() {
         )}
       </main>
 
+      {/* 🏠 ปุ่มหน้าหลักตรงกลาง */}
       <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
         <button 
           onClick={() => {setSelectedRoom(null); window.scrollTo(0,0);}}
